@@ -1,3 +1,4 @@
+import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/data/models/PaymentMethodInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,6 +56,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
   String _selectedMinutes = '00';
   String _selectedHours = '00';
   String? _timeSelectionError;
+  bool _isLoading = false;
+  String Charges = "ksh 1000";
 
   // Duration options
   final List<DurationOption> _durationOptions = [
@@ -63,7 +66,6 @@ class _RegistrationFormState extends State<RegistrationForm> {
     DurationOption(label: '2 hours', duration: Duration(hours: 2)),
     DurationOption(label: '3 hours', duration: Duration(hours: 3)),
     DurationOption(label: '4 hours', duration: Duration(hours: 4)),
-
   ];
 
   @override
@@ -72,8 +74,29 @@ class _RegistrationFormState extends State<RegistrationForm> {
     super.dispose();
   }
 
+  void getTarrifs() async {
+    final req = await comms.postRequest(
+      endpoint: "pods/charges",
+      data: {
+        "podId": 1,
+        "startTime": "${_selectedTimeSlot!.dateTime.hour.toString().padLeft(2, '0')}:${_selectedTimeSlot!.dateTime.minute.toString().padLeft(2, '0')}",
+        "endTime": "${_selectedTimeSlot!.dateTime.add(_selectedDuration!.duration).hour.toString().padLeft(2, '0')}:${_selectedTimeSlot!.dateTime.add(_selectedDuration!.duration).minute.toString().padLeft(2, '0')}"
+      },
+    );
+    print("this is $req");
+    if (req["rsp"]['success']) {
+      setState(() {
+        Charges = req["rsp"]['data']['charges'];
+      });
+    } else {
+      setState(() {
+        _timeSelectionError = "Failed to fetch charges";
+      });
+    }
+  }
+
   // Generate time slots for a given date (you'll replace this with API call)
-  
+
   List<TimeSlot> _generateTimeSlots(DateTime date) {
     List<TimeSlot> slots = [];
     DateTime now = DateTime.now();
@@ -154,6 +177,67 @@ class _RegistrationFormState extends State<RegistrationForm> {
     }
   }
 
+  void _bookPod() async {
+    if (!_formKey.currentState!.validate() || !_validateBookingSelection()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _bookingError = null;
+    });
+
+    try {
+      final sessionData = {
+        "podId": 1,
+        "date":
+            "${_selectedTimeSlot!.dateTime.year}-${_selectedTimeSlot!.dateTime.month.toString().padLeft(2, '0')}-${_selectedTimeSlot!.dateTime.day.toString().padLeft(2, '0')}",
+        "startTime":
+            "${_selectedTimeSlot!.dateTime.hour.toString().padLeft(2, '0')}:${_selectedTimeSlot!.dateTime.minute.toString().padLeft(2, '0')}",
+        "endTime":
+            "${_selectedTimeSlot!.dateTime.add(_selectedDuration!.duration).hour.toString().padLeft(2, '0')}:${_selectedTimeSlot!.dateTime.add(_selectedDuration!.duration).minute.toString().padLeft(2, '0')}",
+        "userPhone": _phoneController.text,
+      };
+
+      final request = await comms.postRequest(
+        endpoint: "pods/book",
+        data: sessionData,
+      );
+
+      if (!mounted) return;
+
+      if (request['success']) {
+        final response = request['message'];
+        final statusCode = request['statusCode'];
+
+        if (statusCode == 200) {
+          setState(() {
+            _registrationStep = 2;
+            _isLoading = false;
+            _bookingError = null;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+            _bookingError = "Booking failed: ${response['message']}";
+          });
+        }
+      } else {
+        setState(() {
+          _isLoading = false;
+          _bookingError = "Booking failed: ${request['rsp']}";
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+        _bookingError = "An error occurred: ${e.toString()}";
+      });
+    }
+  }
+
   bool _validateBookingSelection() {
     if (_phoneController.text.isEmpty) {
       setState(() {
@@ -199,59 +283,64 @@ class _RegistrationFormState extends State<RegistrationForm> {
                   color: Theme.of(context).colorScheme.outline,
                 ),
               ),
-              child: Row(
-                children: [
-                  // Hours
-                  Expanded(
-                    child: _buildTimeWheelPicker(
-                      label: 'Hours',
-                      values: List.generate(
-                        24,
-                        (index) => index.toString().padLeft(2, '0'),
-                      ),
-                      selectedValue: _selectedHours,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedHours = value;
-                          _selectedDuration = DurationOption(
-                            label: '${_selectedHours}h ${_selectedMinutes}m',
-                            duration: Duration(
-                              hours: int.parse(_selectedHours),
-                              minutes: int.parse(_selectedMinutes),
+                    child: Row(
+                      children: [
+                        // Hours
+                        Expanded(
+                          child: _buildTimeWheelPicker(
+                            label: 'Hours',
+                            values: List.generate(
+                              24,
+                              (index) => index.toString().padLeft(2, '0'),
                             ),
-                          );
-                        });
-                      },
-                    ),
-                  ),
-                  // Minutes
-                  Expanded(
-                    child: _buildTimeWheelPicker(
-                      label: 'Minutes',
-                      values: List.generate(
-                        60,
-                        (index) => index.toString().padLeft(2, '0'),
-                      ),
-                      selectedValue: _selectedMinutes,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedMinutes = value;
-
-                      _selectedDuration = DurationOption(
-                            label: '${_selectedHours}h ${_selectedMinutes}m',
-                            duration: Duration(
-                              hours: int.parse(_selectedHours),
-                              minutes: int.parse(_selectedMinutes),
+                            selectedValue: _selectedHours,
+                            onChanged: (value) async {
+                              setState(() {
+                                _selectedHours = value;
+                                _selectedDuration = DurationOption(
+                                  label: '${_selectedHours}h ${_selectedMinutes}m',
+                                  duration: Duration(
+                                    hours: int.parse(_selectedHours),
+                                    minutes: int.parse(_selectedMinutes),
+                                  ),
+                                );
+                              });
+                              getTarrifs();
+                            },
+                          ),
+                        ),
+      
+                        // Minutes
+                        Expanded(
+                          child: _buildTimeWheelPicker(
+                            label: 'Minutes',
+                            values: List.generate(
+                              60,
+                              (index) => index.toString().padLeft(2, '0'),
                             ),
-                          );
-                        
-                        });
-                      },
+                            selectedValue: _selectedMinutes,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedMinutes = value;
+                                _selectedDuration = DurationOption(
+                                  label: '${_selectedHours}h ${_selectedMinutes}m',
+                                  duration: Duration(
+                                    hours: int.parse(_selectedHours),
+                                    minutes: int.parse(_selectedMinutes),
+                                  ),
+                                );
+                              });
+                              getTarrifs();
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
+                
+
             if (_timeSelectionError != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -264,9 +353,8 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 ),
               ),
           ],
-        ),
-      ],
-    );
+        );
+    
   }
 
   Widget _buildTimeWheelPicker({
@@ -390,62 +478,65 @@ class _RegistrationFormState extends State<RegistrationForm> {
             ),
 
           // Navigation buttons
-          Row(
-            children: [
-              if (_registrationStep == 2)
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _registrationStep = 1;
-                        _bookingError = null;
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.arrow_back, size: 16),
-                        SizedBox(width: 8),
-                        Text('BACK'),
-                      ],
-                    ),
-                  ),
+          _isLoading
+              ? CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.secondary,
                 ),
+              )
+              : Row(
+                children: [
+                  if (_registrationStep == 2)
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _registrationStep = 1;
+                            _bookingError = null;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          foregroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.arrow_back, size: 16),
+                            SizedBox(width: 8),
+                            Text('BACK'),
+                          ],
+                        ),
+                      ),
+                    ),
 
-              Expanded(
-                flex: 2,
-                child: ElevatedButton(
-                  onPressed:
-                      _registrationStep == 1
-                          ? () {
-                            if (_validateBookingSelection()) {
-                              setState(() {
-                                _registrationStep = 2;
-                              });
-                            }
-                          }
-                          : _registerPod,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    foregroundColor: Theme.of(context).colorScheme.surface,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed:
+                          _registrationStep == 1 ? _bookPod : _registerPod,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        foregroundColor: Theme.of(context).colorScheme.surface,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: Text(
+                        _registrationStep == 1 ? 'NEXT' : 'CONFIRM PAYMENT',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                    elevation: 2,
                   ),
-                  child: Text(
-                    _registrationStep == 1 ? 'NEXT' : 'CONFIRM PAYMENT',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                ],
               ),
-            ],
-          ),
           SizedBox(height: 16),
 
           // Back to OTP
@@ -789,6 +880,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
                 Text(
                   'End Time: ${_formatTime(_selectedTimeSlot!.dateTime.add(_selectedDuration!.duration))}',
                 ),
+                Text("Charges: kshs $Charges"),
               ],
             ),
           ),
