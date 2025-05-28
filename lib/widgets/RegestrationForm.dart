@@ -1,10 +1,10 @@
 import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/data/models/PaymentMethodInfo.dart';
+import 'package:dogo/data/models/booking.dart';
+import 'package:dogo/data/services/FetchGlobals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// Enum for payment methods
-enum PaymentMethod { card, bank, mpesa }
 
 // Time slot model
 class TimeSlot {
@@ -58,6 +58,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
   String? _timeSelectionError;
   bool _isLoading = false;
   String Charges = "ksh 1000";
+  List<PaymentMethodInfo> payments =[];
 
   // Duration options
   final List<DurationOption> _durationOptions = [
@@ -94,6 +95,25 @@ class _RegistrationFormState extends State<RegistrationForm> {
       });
     }
   }
+
+
+  void getPayments()async{
+    try {
+        payments = await fetchGlobal<PaymentMethodInfo>(getRequests:(endpoint)=>comms.getRequests(endpoint: endpoint), fromJson:PaymentMethodInfo.fromJson, endpoint: "configs/pay-methods");
+
+      
+    } catch (e) {
+      print("Error fetching payment methods: $e");
+      setState(() {
+        _bookingError = "Failed to fetch payment methods";
+      });
+      
+    }
+  
+  }
+
+
+
 
   // Generate time slots for a given date (you'll replace this with API call)
 
@@ -203,19 +223,28 @@ class _RegistrationFormState extends State<RegistrationForm> {
         endpoint: "pods/book",
         data: sessionData,
       );
+      print("Booking request: $request");
 
       if (!mounted) return;
 
-      if (request['success']) {
+      if (request["rsp"]['success']) {
+
         final response = request['message'];
         final statusCode = request['statusCode'];
+        //  save the booking data to memory
+        booking = Booking.fromJson(request["rsp"]['data'], _phoneController.text);
+        getPayments();
+
 
         if (statusCode == 200) {
-          setState(() {
+          Future.delayed(Duration(seconds: 2), () {
+           setState(() {
             _registrationStep = 2;
             _isLoading = false;
             _bookingError = null;
           });
+          });
+       
         } else {
           setState(() {
             _isLoading = false;
@@ -237,6 +266,10 @@ class _RegistrationFormState extends State<RegistrationForm> {
       });
     }
   }
+
+
+
+
 
   bool _validateBookingSelection() {
     if (_phoneController.text.isEmpty) {
@@ -479,9 +512,11 @@ class _RegistrationFormState extends State<RegistrationForm> {
 
           // Navigation buttons
           _isLoading
-              ? CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).colorScheme.secondary,
+              ? Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               )
               : Row(
@@ -891,7 +926,87 @@ class _RegistrationFormState extends State<RegistrationForm> {
   Widget _buildPaymentMethodStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+      children: 
+      [
+        // Display session details
+        Container(
+          padding: EdgeInsets.all(16),
+          margin: EdgeInsets.only(bottom: 24),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Session Details',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Session ID',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        Text(
+                          booking.sessionId,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Duration',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        Text(
+                          booking.duration,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+               Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   Text(
+                     'Session Phone Number',
+                     style: Theme.of(context).textTheme.bodySmall,
+                   ),
+                   Text(
+                     booking.phoneNumber,
+                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                       fontWeight: FontWeight.w500,
+                     ),
+                   ),
+                 ],
+               ),
+            ],
+          ),
+        ),
+
+
         Text(
           'Select Payment Method',
           style: Theme.of(
@@ -901,7 +1016,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         SizedBox(height: 16),
 
         // Payment options
-        ...PaymentMethod.values.map((method) => _buildPaymentOption(method)),
+        ...payments.map((method) => _buildPaymentOption(method)),
 
         SizedBox(height: 24),
 
@@ -916,94 +1031,89 @@ class _RegistrationFormState extends State<RegistrationForm> {
     );
   }
 
-  Widget _buildPaymentOption(PaymentMethod method) {
-    final isSelected = _selectedPaymentMethod == method;
-    final paymentInfo = _getPaymentMethodInfo(method);
+  Widget _buildPaymentOption(PaymentMethodInfo paymentInfo) {
+    final isSelected = _selectedPaymentMethod == paymentInfo.method;
 
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedPaymentMethod = method;
-        });
+      setState(() {
+        _selectedPaymentMethod = paymentInfo.method;
+      });
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 12),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color:
-              isSelected
-                  ? Theme.of(context).colorScheme.primaryContainer
-                  : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color:
-                isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.outline,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color:
-                      isSelected
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
-                  width: 2,
-                ),
-              ),
-              child:
-                  isSelected
-                      ? Center(
-                        child: Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      )
-                      : null,
-            ),
-            SizedBox(width: 12),
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(paymentInfo.icon, color: paymentInfo.color),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    paymentInfo.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    paymentInfo.description,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-          ],
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isSelected
+          ? Theme.of(context).colorScheme.primaryContainer
+          : Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+        color: isSelected
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).colorScheme.outline,
+        width: isSelected ? 2 : 1,
         ),
       ),
+      child: Row(
+        children: [
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+            width: 2,
+          ),
+          ),
+          child: isSelected
+            ? Center(
+              child: Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              ),
+            )
+            : null,
+        ),
+        SizedBox(width: 12),
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(paymentInfo.icon, color: paymentInfo.color),
+        ),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+            paymentInfo.title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+            paymentInfo.description,
+            style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+          ),
+        ),
+        ],
+      ),
+      ),
     );
-  }
+    }
 
   Widget _buildPaymentDetailsForm(PaymentMethod method) {
     switch (method) {
@@ -1207,31 +1317,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
       filled: true,
       fillColor: Theme.of(context).colorScheme.surface,
     );
+  
   }
 
-  PaymentMethodInfo _getPaymentMethodInfo(PaymentMethod method) {
-    switch (method) {
-      case PaymentMethod.card:
-        return PaymentMethodInfo(
-          name: 'Credit/Debit Card',
-          description: 'Pay securely with your card',
-          icon: Icons.credit_card,
-          color: Colors.blue,
-        );
-      case PaymentMethod.bank:
-        return PaymentMethodInfo(
-          name: 'Bank Transfer',
-          description: 'Pay directly from your bank account',
-          icon: Icons.account_balance,
-          color: Colors.green,
-        );
-      case PaymentMethod.mpesa:
-        return PaymentMethodInfo(
-          name: 'M-Pesa',
-          description: 'Pay using M-Pesa mobile money',
-          icon: Icons.phone_android,
-          color: Colors.deepPurple,
-        );
-    }
-  }
 }

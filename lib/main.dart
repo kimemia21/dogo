@@ -350,536 +350,536 @@ class _HomePageState extends State<HomePage>
   //   );
   // }
 
-  Widget _buildRegistrationForm() {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Register for Pod',
-            style: Theme.of(context).textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Enter your details to get a Pod code',
-            style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 24),
+  // Widget _buildRegistrationForm() {
+  //   return Form(
+  //     key: _formKey,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.stretch,
+  //       children: [
+  //         Text(
+  //           'Register for Pod',
+  //           style: Theme.of(context).textTheme.headlineMedium,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         SizedBox(height: 8),
+  //         Text(
+  //           'Enter your details to get a Pod code',
+  //           style: Theme.of(context).textTheme.bodyMedium,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         SizedBox(height: 24),
 
-          // Step indicator
-          _buildStepIndicator(),
-          SizedBox(height: 24),
+  //         // Step indicator
+  //         _buildStepIndicator(),
+  //         SizedBox(height: 24),
 
-          // Form steps
-          _registrationStep == 1
-              ? _buildTimeSelectionStep()
-              : _buildPaymentMethodStep(),
+  //         // Form steps
+  //         _registrationStep == 1
+  //             ? _buildTimeSelectionStep()
+  //             : _buildPaymentMethodStep(),
 
-          SizedBox(height: 24),
+  //         SizedBox(height: 24),
 
-          // Navigation buttons
-          Row(
-            children: [
-              if (_registrationStep == 2)
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _registrationStep = 1;
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.arrow_back, size: 16),
-                        SizedBox(width: 8),
-                        Text('BACK'),
-                      ],
-                    ),
-                  ),
-                ),
+  //         // Navigation buttons
+  //         Row(
+  //           children: [
+  //             if (_registrationStep == 2)
+  //               Expanded(
+  //                 child: TextButton(
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       _registrationStep = 1;
+  //                     });
+  //                   },
+  //                   style: TextButton.styleFrom(
+  //                     padding: EdgeInsets.symmetric(vertical: 16),
+  //                   ),
+  //                   child: Row(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     children: [
+  //                       Icon(Icons.arrow_back, size: 16),
+  //                       SizedBox(width: 8),
+  //                       Text('BACK'),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
 
-              Expanded(
-                flex: 2,
-                child: ElevatedButton(
-                  onPressed:
-                      _registrationStep == 1
-                          ? () {
-                            if (_validateTimeSelection()) {
-                              setState(() {
-                                _registrationStep = 2;
-                              });
-                            }
-                          }
-                          : _registerPod,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 2,
-                  ),
-                  child: Text(
-                    _registrationStep == 1 ? 'NEXT' : 'CONFIRM PAYMENT',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
+  //             Expanded(
+  //               flex: 2,
+  //               child: ElevatedButton(
+  //                 onPressed:
+  //                     _registrationStep == 1
+  //                         ? () {
+  //                           if (_validateTimeSelection()) {
+  //                             setState(() {
+  //                               _registrationStep = 2;
+  //                             });
+  //                           }
+  //                         }
+  //                         : _registerPod,
+  //                 style: ElevatedButton.styleFrom(
+  //                   backgroundColor: Theme.of(context).colorScheme.secondary,
+  //                   foregroundColor: Colors.white,
+  //                   padding: EdgeInsets.symmetric(vertical: 16),
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(12),
+  //                   ),
+  //                   elevation: 2,
+  //                 ),
+  //                 child: Text(
+  //                   _registrationStep == 1 ? 'NEXT' : 'CONFIRM PAYMENT',
+  //                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(height: 16),
 
-          // Back to OTP
-          TextButton(
-            onPressed: () {
-              setState(() {
-                _isRegistering = false;
-                _registrationStep = 1;
-              });
-            },
-            child: Text(
-              'Already have an OTP? Go back',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //         // Back to OTP
+  //         TextButton(
+  //           onPressed: () {
+  //             setState(() {
+  //               _isRegistering = false;
+  //               _registrationStep = 1;
+  //             });
+  //           },
+  //           child: Text(
+  //             'Already have an OTP? Go back',
+  //             style: TextStyle(
+  //               color: Theme.of(context).colorScheme.secondary,
+  //               fontWeight: FontWeight.w500,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildStepIndicator() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            height: 4,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ),
-        SizedBox(width: 8),
-        Expanded(
-          child: Container(
-            height: 4,
-            decoration: BoxDecoration(
-              color:
-                  _registrationStep == 2
-                      ? Theme.of(context).colorScheme.secondary
-                      : Color(0xFFE2E8F0),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildStepIndicator() {
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: Container(
+  //           height: 4,
+  //           decoration: BoxDecoration(
+  //             color: Theme.of(context).colorScheme.secondary,
+  //             borderRadius: BorderRadius.circular(2),
+  //           ),
+  //         ),
+  //       ),
+  //       SizedBox(width: 8),
+  //       Expanded(
+  //         child: Container(
+  //           height: 4,
+  //           decoration: BoxDecoration(
+  //             color:
+  //                 _registrationStep == 2
+  //                     ? Theme.of(context).colorScheme.secondary
+  //                     : Color(0xFFE2E8F0),
+  //             borderRadius: BorderRadius.circular(2),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildTimeSelectionStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Phone Number
-        SizedBox(height: 24),
+  // Widget _buildTimeSelectionStep() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.stretch,
+  //     children: [
+  //       // Phone Number
+  //       SizedBox(height: 24),
 
-        // Duration Selector
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Select Pod Duration',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF334155),
-              ),
-            ),
-            SizedBox(height: 12),
-            Container(
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xFFCBD5E1)),
-              ),
-              child: Row(
-                children: [
-                  // Hours
-                  Expanded(
-                    child: _buildTimeWheelPicker(
-                      label: 'Hours',
-                      values: List.generate(
-                        24,
-                        (index) => index.toString().padLeft(2, '0'),
-                      ),
-                      selectedValue: _selectedHours,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedHours = value;
-                        });
-                      },
-                    ),
-                  ),
-                  // Minutes
-                  Expanded(
-                    child: _buildTimeWheelPicker(
-                      label: 'Minutes',
-                      values: List.generate(
-                        60,
-                        (index) => index.toString().padLeft(2, '0'),
-                      ),
-                      selectedValue: _selectedMinutes,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedMinutes = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (_timeSelectionError != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  _timeSelectionError!,
-                  style: TextStyle(color: Colors.red, fontSize: 12),
-                ),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
+  //       // Duration Selector
+  //       Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text(
+  //             'Select Pod Duration',
+  //             style: TextStyle(
+  //               fontSize: 16,
+  //               fontWeight: FontWeight.w500,
+  //               color: Color(0xFF334155),
+  //             ),
+  //           ),
+  //           SizedBox(height: 12),
+  //           Container(
+  //             height: 150,
+  //             decoration: BoxDecoration(
+  //               color: Colors.white,
+  //               borderRadius: BorderRadius.circular(12),
+  //               border: Border.all(color: Color(0xFFCBD5E1)),
+  //             ),
+  //             child: Row(
+  //               children: [
+  //                 // Hours
+  //                 Expanded(
+  //                   child: _buildTimeWheelPicker(
+  //                     label: 'Hours',
+  //                     values: List.generate(
+  //                       24,
+  //                       (index) => index.toString().padLeft(2, '0'),
+  //                     ),
+  //                     selectedValue: _selectedHours,
+  //                     onChanged: (value) {
+  //                       setState(() {
+  //                         _selectedHours = value;
+  //                       });
+  //                     },
+  //                   ),
+  //                 ),
+  //                 // Minutes
+  //                 Expanded(
+  //                   child: _buildTimeWheelPicker(
+  //                     label: 'Minutes',
+  //                     values: List.generate(
+  //                       60,
+  //                       (index) => index.toString().padLeft(2, '0'),
+  //                     ),
+  //                     selectedValue: _selectedMinutes,
+  //                     onChanged: (value) {
+  //                       setState(() {
+  //                         _selectedMinutes = value;
+  //                       });
+  //                     },
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           if (_timeSelectionError != null)
+  //             Padding(
+  //               padding: const EdgeInsets.only(top: 8.0),
+  //               child: Text(
+  //                 _timeSelectionError!,
+  //                 style: TextStyle(color: Colors.red, fontSize: 12),
+  //               ),
+  //             ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildTimeWheelPicker({
-    required String label,
-    required List<String> values,
-    required String selectedValue,
-    required Function(String) onChanged,
-  }) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF64748B),
-          ),
-        ),
-        SizedBox(height: 4),
-        Expanded(
-          child: ListWheelScrollView(
-            itemExtent: 40,
-            diameterRatio: 1.5,
-            physics: FixedExtentScrollPhysics(),
-            children:
-                values.map((value) {
-                  final isSelected = value == selectedValue;
-                  return Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    decoration:
-                        isSelected
-                            ? BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.secondary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            )
-                            : null,
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: isSelected ? 20 : 16,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                        color:
-                            isSelected
-                                ? Theme.of(context).colorScheme.secondary
-                                : Color(0xFF64748B),
-                      ),
-                    ),
-                  );
-                }).toList(),
-            onSelectedItemChanged: (index) {
-              onChanged(values[index]);
-            },
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildTimeWheelPicker({
+  //   required String label,
+  //   required List<String> values,
+  //   required String selectedValue,
+  //   required Function(String) onChanged,
+  // }) {
+  //   return Column(
+  //     children: [
+  //       Text(
+  //         label,
+  //         style: TextStyle(
+  //           fontSize: 14,
+  //           fontWeight: FontWeight.w500,
+  //           color: Color(0xFF64748B),
+  //         ),
+  //       ),
+  //       SizedBox(height: 4),
+  //       Expanded(
+  //         child: ListWheelScrollView(
+  //           itemExtent: 40,
+  //           diameterRatio: 1.5,
+  //           physics: FixedExtentScrollPhysics(),
+  //           children:
+  //               values.map((value) {
+  //                 final isSelected = value == selectedValue;
+  //                 return Container(
+  //                   width: double.infinity,
+  //                   alignment: Alignment.center,
+  //                   decoration:
+  //                       isSelected
+  //                           ? BoxDecoration(
+  //                             color: Theme.of(
+  //                               context,
+  //                             ).colorScheme.secondary.withOpacity(0.1),
+  //                             borderRadius: BorderRadius.circular(8),
+  //                           )
+  //                           : null,
+  //                   child: Text(
+  //                     value,
+  //                     style: TextStyle(
+  //                       fontSize: isSelected ? 20 : 16,
+  //                       fontWeight:
+  //                           isSelected ? FontWeight.bold : FontWeight.normal,
+  //                       color:
+  //                           isSelected
+  //                               ? Theme.of(context).colorScheme.secondary
+  //                               : Color(0xFF64748B),
+  //                     ),
+  //                   ),
+  //                 );
+  //               }).toList(),
+  //           onSelectedItemChanged: (index) {
+  //             onChanged(values[index]);
+  //           },
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildPaymentMethodStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'Select Payment Method',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF334155),
-          ),
-        ),
-        SizedBox(height: 16),
+  // Widget _buildPaymentMethodStep() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.stretch,
+  //     children: [
+  //       Text(
+  //         'Select Payment Method',
+  //         style: TextStyle(
+  //           fontSize: 16,
+  //           fontWeight: FontWeight.w500,
+  //           color: Color(0xFF334155),
+  //         ),
+  //       ),
+  //       SizedBox(height: 16),
 
-        // Payment options
-        ...PaymentMethod.values.map((method) => _buildPaymentOption(method)),
+  //       // Payment options
+  //       ...PaymentMethod.values.map((method) => _buildPaymentOption(method)),
 
-        SizedBox(height: 24),
+  //       SizedBox(height: 24),
 
-        // Payment details form based on selected method
-        if (_selectedPaymentMethod != null)
-          AnimatedContainer(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            child: _buildPaymentDetailsForm(_selectedPaymentMethod!),
-          ),
-      ],
-    );
-  }
+  //       // Payment details form based on selected method
+  //       if (_selectedPaymentMethod != null)
+  //         AnimatedContainer(
+  //           duration: Duration(milliseconds: 300),
+  //           curve: Curves.easeInOut,
+  //           child: _buildPaymentDetailsForm(_selectedPaymentMethod!),
+  //         ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildPaymentOption(PaymentMethod method) {
-    final isSelected = _selectedPaymentMethod == method;
-    final paymentInfo = _getPaymentMethodInfo(method);
+  // Widget _buildPaymentOption(PaymentMethod method) {
+  //   final isSelected = _selectedPaymentMethod == method;
+  //   final paymentInfo = _getPaymentMethodInfo(method);
 
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedPaymentMethod = method;
-        });
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 12),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? Color(0xFFEFF6FF) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color:
-                isSelected
-                    ? Theme.of(context).colorScheme.secondary
-                    : Color(0xFFCBD5E1),
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color:
-                      isSelected
-                          ? Theme.of(context).colorScheme.secondary
-                          : Color(0xFF94A3B8),
-                  width: 2,
-                ),
-              ),
-              child:
-                  isSelected
-                      ? Center(
-                        child: Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      )
-                      : null,
-            ),
-            SizedBox(width: 12),
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(paymentInfo.icon, color: paymentInfo.color),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    paymentInfo.name,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  Text(
-                    paymentInfo.description,
-                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //   return GestureDetector(
+  //     onTap: () {
+  //       setState(() {
+  //         _selectedPaymentMethod = method;
+  //       });
+  //     },
+  //     child: Container(
+  //       margin: EdgeInsets.only(bottom: 12),
+  //       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  //       decoration: BoxDecoration(
+  //         color: isSelected ? Color(0xFFEFF6FF) : Colors.white,
+  //         borderRadius: BorderRadius.circular(12),
+  //         border: Border.all(
+  //           color:
+  //               isSelected
+  //                   ? Theme.of(context).colorScheme.secondary
+  //                   : Color(0xFFCBD5E1),
+  //           width: isSelected ? 2 : 1,
+  //         ),
+  //       ),
+  //       child: Row(
+  //         children: [
+  //           Container(
+  //             width: 24,
+  //             height: 24,
+  //             decoration: BoxDecoration(
+  //               shape: BoxShape.circle,
+  //               border: Border.all(
+  //                 color:
+  //                     isSelected
+  //                         ? Theme.of(context).colorScheme.secondary
+  //                         : Color(0xFF94A3B8),
+  //                 width: 2,
+  //               ),
+  //             ),
+  //             child:
+  //                 isSelected
+  //                     ? Center(
+  //                       child: Container(
+  //                         width: 12,
+  //                         height: 12,
+  //                         decoration: BoxDecoration(
+  //                           shape: BoxShape.circle,
+  //                           color: Theme.of(context).colorScheme.secondary,
+  //                         ),
+  //                       ),
+  //                     )
+  //                     : null,
+  //           ),
+  //           SizedBox(width: 12),
+  //           Container(
+  //             padding: EdgeInsets.all(8),
+  //             decoration: BoxDecoration(
+  //               color: Color(0xFFF1F5F9),
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //             child: Icon(paymentInfo.icon, color: paymentInfo.color),
+  //           ),
+  //           SizedBox(width: 12),
+  //           Expanded(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   paymentInfo.name,
+  //                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  //                 ),
+  //                 Text(
+  //                   paymentInfo.description,
+  //                   style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildPaymentDetailsForm(PaymentMethod method) {
-    switch (method) {
-      case PaymentMethod.card:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDivider('Card Details'),
-            TextFormField(
-              decoration: _getInputDecoration(
-                label: 'Card Number',
-                hint: '1234 5678 9012 3456',
-                icon: Icons.credit_card,
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(16),
-              ],
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: _getInputDecoration(
-                      label: 'Expiry Date',
-                      hint: 'MM/YY',
-                      icon: Icons.calendar_today,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(4),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: TextFormField(
-                    decoration: _getInputDecoration(
-                      label: 'CVV',
-                      hint: '123',
-                      icon: Icons.lock_outline,
-                    ),
-                    obscureText: true,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(3),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              decoration: _getInputDecoration(
-                label: 'Cardholder Name',
-                hint: 'Name as it appears on card',
-                icon: Icons.person_outline,
-              ),
-            ),
-          ],
-        );
+  // Widget _buildPaymentDetailsForm(PaymentMethod method) {
+  //   switch (method) {
+  //     case PaymentMethod.card:
+  //       return Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           _buildDivider('Card Details'),
+  //           TextFormField(
+  //             decoration: _getInputDecoration(
+  //               label: 'Card Number',
+  //               hint: '1234 5678 9012 3456',
+  //               icon: Icons.credit_card,
+  //             ),
+  //             keyboardType: TextInputType.number,
+  //             inputFormatters: [
+  //               FilteringTextInputFormatter.digitsOnly,
+  //               LengthLimitingTextInputFormatter(16),
+  //             ],
+  //           ),
+  //           SizedBox(height: 16),
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: TextFormField(
+  //                   decoration: _getInputDecoration(
+  //                     label: 'Expiry Date',
+  //                     hint: 'MM/YY',
+  //                     icon: Icons.calendar_today,
+  //                   ),
+  //                   inputFormatters: [
+  //                     FilteringTextInputFormatter.digitsOnly,
+  //                     LengthLimitingTextInputFormatter(4),
+  //                   ],
+  //                 ),
+  //               ),
+  //               SizedBox(width: 16),
+  //               Expanded(
+  //                 child: TextFormField(
+  //                   decoration: _getInputDecoration(
+  //                     label: 'CVV',
+  //                     hint: '123',
+  //                     icon: Icons.lock_outline,
+  //                   ),
+  //                   obscureText: true,
+  //                   inputFormatters: [
+  //                     FilteringTextInputFormatter.digitsOnly,
+  //                     LengthLimitingTextInputFormatter(3),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           SizedBox(height: 16),
+  //           TextFormField(
+  //             decoration: _getInputDecoration(
+  //               label: 'Cardholder Name',
+  //               hint: 'Name as it appears on card',
+  //               icon: Icons.person_outline,
+  //             ),
+  //           ),
+  //         ],
+  //       );
 
-      case PaymentMethod.bank:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDivider('Bank Transfer Details'),
-            DropdownButtonFormField<String>(
-              decoration: _getInputDecoration(
-                label: 'Select Bank',
-                hint: 'Choose your bank',
-                icon: Icons.account_balance,
-              ),
-              items:
-                  [
-                    'KCB Bank',
-                    'Equity Bank',
-                    'Standard Chartered',
-                    'Cooperative Bank',
-                    'NCBA Bank',
-                  ].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-              onChanged: (value) {},
-            ),
-            SizedBox(height: 16),
-            TextFormField(
-              decoration: _getInputDecoration(
-                label: 'Account Number',
-                hint: 'Enter your account number',
-                icon: Icons.account_balance_wallet,
-              ),
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        );
+  //     case PaymentMethod.bank:
+  //       return Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           _buildDivider('Bank Transfer Details'),
+  //           DropdownButtonFormField<String>(
+  //             decoration: _getInputDecoration(
+  //               label: 'Select Bank',
+  //               hint: 'Choose your bank',
+  //               icon: Icons.account_balance,
+  //             ),
+  //             items:
+  //                 [
+  //                   'KCB Bank',
+  //                   'Equity Bank',
+  //                   'Standard Chartered',
+  //                   'Cooperative Bank',
+  //                   'NCBA Bank',
+  //                 ].map((String value) {
+  //                   return DropdownMenuItem<String>(
+  //                     value: value,
+  //                     child: Text(value),
+  //                   );
+  //                 }).toList(),
+  //             onChanged: (value) {},
+  //           ),
+  //           SizedBox(height: 16),
+  //           TextFormField(
+  //             decoration: _getInputDecoration(
+  //               label: 'Account Number',
+  //               hint: 'Enter your account number',
+  //               icon: Icons.account_balance_wallet,
+  //             ),
+  //             keyboardType: TextInputType.number,
+  //           ),
+  //         ],
+  //       );
 
-      case PaymentMethod.mpesa:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDivider('M-Pesa Details'),
-            TextFormField(
-              controller: _phoneController,
-              decoration: _getInputDecoration(
-                label: 'M-Pesa Phone Number',
-                hint: 'Enter phone number registered with M-Pesa',
-                icon: Icons.phone_android,
-              ),
-              keyboardType: TextInputType.phone,
-              enabled: false,
-            ),
-            SizedBox(height: 16),
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Color(0xFFEFF6FF),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xFFBFDBFE)),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, color: Color(0xFF3B82F6)),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'You will receive an M-Pesa prompt on your phone to complete the payment.',
-                      style: TextStyle(fontSize: 14, color: Color(0xFF334155)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-    }
-  }
+  //     case PaymentMethod.mpesa:
+  //       return Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           _buildDivider('M-Pesa Details'),
+  //           TextFormField(
+  //             controller: _phoneController,
+  //             decoration: _getInputDecoration(
+  //               label: 'M-Pesa Phone Number',
+  //               hint: 'Enter phone number registered with M-Pesa',
+  //               icon: Icons.phone_android,
+  //             ),
+  //             keyboardType: TextInputType.phone,
+  //             enabled: false,
+  //           ),
+  //           SizedBox(height: 16),
+  //           Container(
+  //             padding: EdgeInsets.all(16),
+  //             decoration: BoxDecoration(
+  //               color: Color(0xFFEFF6FF),
+  //               borderRadius: BorderRadius.circular(12),
+  //               border: Border.all(color: Color(0xFFBFDBFE)),
+  //             ),
+  //             child: Row(
+  //               children: [
+  //                 Icon(Icons.info_outline, color: Color(0xFF3B82F6)),
+  //                 SizedBox(width: 12),
+  //                 Expanded(
+  //                   child: Text(
+  //                     'You will receive an M-Pesa prompt on your phone to complete the payment.',
+  //                     style: TextStyle(fontSize: 14, color: Color(0xFF334155)),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //   }
+  // }
 
   Widget _buildDivider(String text) {
     return Padding(
@@ -930,31 +930,31 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  PaymentMethodInfo _getPaymentMethodInfo(PaymentMethod method) {
-    switch (method) {
-      case PaymentMethod.card:
-        return PaymentMethodInfo(
-          name: 'Credit/Debit Card',
-          description: 'Pay securely with your card',
-          icon: Icons.credit_card,
-          color: Colors.blue,
-        );
-      case PaymentMethod.bank:
-        return PaymentMethodInfo(
-          name: 'Bank Transfer',
-          description: 'Pay directly from your bank account',
-          icon: Icons.account_balance,
-          color: Colors.green,
-        );
-      case PaymentMethod.mpesa:
-        return PaymentMethodInfo(
-          name: 'M-Pesa',
-          description: 'Pay using M-Pesa mobile money',
-          icon: Icons.phone_android,
-          color: Colors.deepPurple,
-        );
-    }
-  }
+  // PaymentMethodInfo _getPaymentMethodInfo(PaymentMethod method) {
+  //   switch (method) {
+  //     case PaymentMethod.card:
+  //       return PaymentMethodInfo(
+  //         name: 'Credit/Debit Card',
+  //         description: 'Pay securely with your card',
+  //         icon: Icons.credit_card,
+  //         color: Colors.blue,
+  //       );
+  //     case PaymentMethod.bank:
+  //       return PaymentMethodInfo(
+  //         name: 'Bank Transfer',
+  //         description: 'Pay directly from your bank account',
+  //         icon: Icons.account_balance,
+  //         color: Colors.green,
+  //       );
+  //     case PaymentMethod.mpesa:
+  //       return PaymentMethodInfo(
+  //         name: 'M-Pesa',
+  //         description: 'Pay using M-Pesa mobile money',
+  //         icon: Icons.phone_android,
+  //         color: Colors.deepPurple,
+  //       );
+  //   }
+  // }
 
   bool _validateTimeSelection() {
     if (_selectedHours == "00" && _selectedMinutes == "00") {
