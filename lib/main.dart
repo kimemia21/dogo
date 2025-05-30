@@ -10,8 +10,7 @@ import 'package:dogo/widgets/select_pod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// Enum for payment methods
-enum PaymentMethod { card, bank, mpesa }
+
 
 // Class to store payment method information
 // class PaymentMethodInfo {
