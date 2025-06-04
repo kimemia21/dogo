@@ -2,7 +2,6 @@ import 'package:dogo/core/theme/AppColors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 class AppHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,7 +17,7 @@ class AppHeader extends StatelessWidget {
             ),
             SizedBox(width: 12),
             Text(
-              'PREMIUM Pod',
+              'DOGO',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -61,9 +60,10 @@ class StepIndicator extends StatelessWidget {
             margin: EdgeInsets.only(right: index < totalSteps - 1 ? 8 : 0),
             height: 4,
             decoration: BoxDecoration(
-              color: index < currentStep 
-                ? Theme.of(context).colorScheme.secondary 
-                : AppColors.borderLight,
+              color:
+                  index < currentStep
+                      ? Theme.of(context).colorScheme.secondary
+                      : AppColors.borderLight,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -98,10 +98,7 @@ class CustomButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) ...[
-              Icon(icon, size: 16),
-              SizedBox(width: 8),
-            ],
+            if (icon != null) ...[Icon(icon, size: 16), SizedBox(width: 8)],
             Text(text),
           ],
         ),
@@ -114,9 +111,7 @@ class CustomButton extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.secondary,
         foregroundColor: Colors.white,
         padding: EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 2,
       ),
       child: Text(
@@ -159,16 +154,17 @@ class CustomTextField extends StatelessWidget {
         labelText: label,
         hintText: hint,
         prefixIcon: Icon(icon),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.secondary,
+            width: 2,
+          ),
         ),
         filled: true,
         fillColor: Colors.white,
@@ -207,15 +203,16 @@ class InfoCard extends StatelessWidget {
         border: Border.all(
           color: isHighlighted ? AppColors.infoBorder : AppColors.borderLight,
         ),
-        boxShadow: isHighlighted
-            ? [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                )
-              ]
-            : null,
+        boxShadow:
+            isHighlighted
+                ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ]
+                : null,
       ),
       child: Row(
         children: [
@@ -249,12 +246,15 @@ class InfoCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: isHighlighted ? Color(0xFF1E40AF) : AppColors.textPrimary,
+                    color:
+                        isHighlighted
+                            ? Color(0xFF1E40AF)
+                            : AppColors.textPrimary,
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

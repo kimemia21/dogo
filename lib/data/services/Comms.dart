@@ -185,9 +185,10 @@ class Comms {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
     bool isFormData = false,
+    bool? isLocal = false,
   }) async {
     try {
-      final String url = "$baseUrl/$endpoint";
+      final String url = isLocal! ? "http://localhost:8000" : "$baseUrl/$endpoint";
       
       dynamic requestData = data;
       if (isFormData) {

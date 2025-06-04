@@ -1,20 +1,12 @@
 import 'package:dogo/core/theme/AppColors.dart';
+import 'package:dogo/features/Regestration/RegestrationForm.dart';
 import 'package:dogo/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 class OTPForm extends StatelessWidget {
-  final TextEditingController otpController;
-  final VoidCallback onValidate;
-  final VoidCallback onRegister;
-
-  const OTPForm({
-    Key? key,
-    required this.otpController,
-    required this.onValidate,
-    required this.onRegister,
-  }) : super(key: key);
+  OTPForm();
+  final TextEditingController otpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,18 +25,25 @@ class OTPForm extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 24),
-        
+
         _buildOTPInput(context),
         SizedBox(height: 24),
-        
-        CustomButton(
-          text: 'VALIDATE',
-          onPressed: onValidate,
-        ),
+
+        CustomButton(text: 'VALIDATE', onPressed: () {}),
         SizedBox(height: 16),
-        
+
         TextButton(
-          onPressed: onRegister,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => PodBookingPage(
+                     
+                    ),
+              ),
+            );
+          },
           child: Text(
             'Need to register? Tap here',
             style: TextStyle(
@@ -74,7 +73,10 @@ class OTPForm extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 2),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.secondary,
+            width: 2,
+          ),
         ),
         filled: true,
         fillColor: Colors.white,
