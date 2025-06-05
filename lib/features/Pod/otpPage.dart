@@ -1,4 +1,5 @@
 import 'package:dogo/core/theme/AppColors.dart';
+import 'package:dogo/features/Regestration/Alerts.dart';
 import 'package:dogo/features/Regestration/RegestrationForm.dart';
 import 'package:dogo/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +35,13 @@ class OTPForm extends StatelessWidget {
 
         TextButton(
           onPressed: () {
+            // showMpesaPaymentConfirmationDialog(context);
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder:
                     (context) => PodBookingPage(
-                     
+
                     ),
               ),
             );

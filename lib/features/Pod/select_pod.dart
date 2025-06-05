@@ -4,13 +4,12 @@ import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppColors.dart';
 import 'package:dogo/data/models/Pod.dart';
 import 'package:dogo/data/services/FetchGlobals.dart';
+import 'package:dogo/features/Pod/otpPage.dart';
 import 'package:dogo/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 
 class PodSelectionForm extends StatefulWidget {
-  const PodSelectionForm({
-    Key? key,
-  }) : super(key: key);
+  const PodSelectionForm({Key? key}) : super(key: key);
 
   @override
   State<PodSelectionForm> createState() => _PodSelectionFormState();
@@ -121,26 +120,22 @@ class _PodSelectionFormState extends State<PodSelectionForm>
               ),
             ],
           ),
-          child: Icon(
-            Icons.workspaces_outline,
-            color: Colors.white,
-            size: 40,
-          ),
+          child: Icon(Icons.workspaces_outline, color: Colors.white, size: 40),
         ),
         SizedBox(height: 20),
         Text(
           'Select Your POD',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 8),
         Text(
           'Choose from our premium work pods available across the city',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Colors.grey[600],
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
           textAlign: TextAlign.center,
         ),
       ],
@@ -198,9 +193,9 @@ class _PodSelectionFormState extends State<PodSelectionForm>
           SizedBox(height: 8),
           Text(
             'Please wait while we load PODs',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -213,11 +208,7 @@ class _PodSelectionFormState extends State<PodSelectionForm>
       padding: EdgeInsets.all(48),
       child: Column(
         children: [
-          Icon(
-            Icons.cloud_off_outlined,
-            size: 48,
-            color: Colors.red[400],
-          ),
+          Icon(Icons.cloud_off_outlined, size: 48, color: Colors.red[400]),
           SizedBox(height: 16),
           Text(
             'Connection Issue',
@@ -230,9 +221,9 @@ class _PodSelectionFormState extends State<PodSelectionForm>
           SizedBox(height: 8),
           Text(
             'Unable to load PODs. Please try again.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 20),
@@ -262,17 +253,17 @@ class _PodSelectionFormState extends State<PodSelectionForm>
           SizedBox(height: 16),
           Text(
             'No Pods Available',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 8),
           Text(
             'All PODs are occupied. Check back soon!',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 20),
@@ -291,16 +282,12 @@ class _PodSelectionFormState extends State<PodSelectionForm>
 
   Widget _buildPodList(BuildContext context, List<Pod> pods) {
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: _isWeb ? 400 : 300,
-      ),
+      constraints: BoxConstraints(maxHeight: _isWeb ? 400 : 300),
       child: ListView.separated(
         padding: EdgeInsets.all(16),
         itemCount: pods.length,
-        separatorBuilder: (context, index) => Divider(
-          height: 1,
-          color: AppColors.border,
-        ),
+        separatorBuilder:
+            (context, index) => Divider(height: 1, color: AppColors.border),
         itemBuilder: (context, index) {
           return _buildPodTile(context, pods[index]);
         },
@@ -314,9 +301,10 @@ class _PodSelectionFormState extends State<PodSelectionForm>
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: isSelected 
-            ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-            : Colors.transparent,
+        color:
+            isSelected
+                ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListTile(
@@ -325,14 +313,15 @@ class _PodSelectionFormState extends State<PodSelectionForm>
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: [
-                      Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.secondary,
-                    ],
-                  )
-                : null,
+            gradient:
+                isSelected
+                    ? LinearGradient(
+                      colors: [
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.secondary,
+                      ],
+                    )
+                    : null,
             color: isSelected ? null : Colors.grey[200],
             borderRadius: BorderRadius.circular(12),
           ),
@@ -346,9 +335,7 @@ class _PodSelectionFormState extends State<PodSelectionForm>
           pod.stationName,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
-            color: isSelected 
-                ? Theme.of(context).colorScheme.primary 
-                : null,
+            color: isSelected ? Theme.of(context).colorScheme.primary : null,
           ),
         ),
         subtitle: Column(
@@ -366,9 +353,9 @@ class _PodSelectionFormState extends State<PodSelectionForm>
                 Expanded(
                   child: Text(
                     pod.location,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                   ),
                 ),
               ],
@@ -385,55 +372,84 @@ class _PodSelectionFormState extends State<PodSelectionForm>
         ),
         trailing: AnimatedSwitcher(
           duration: Duration(milliseconds: 200),
-          child: isSelected
-              ? Container(
-                  key: ValueKey('selected'),
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                )
-              : Container(
-                  key: ValueKey('unselected'),
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey[400]!,
-                      width: 2,
+          child:
+              isSelected
+                  ? Container(
+                    key: ValueKey('selected'),
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
                     ),
-                    shape: BoxShape.circle,
+                    child: Icon(Icons.check, color: Colors.white, size: 16),
+                  )
+                  : Container(
+                    key: ValueKey('unselected'),
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[400]!, width: 2),
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
         ),
         onTap: () {
           setState(() {
             if (selectedPod?.id == pod.id) {
+              podId = selectedPod!.id;
               selectedPod = null; // Deselect if already selected
             } else {
               selectedPod = pod; // Select the tapped pod
+              podId = selectedPod!.id;
             }
-           
-        // 
+
+            //
           });
         },
       ),
     );
   }
-
-  Widget _buildActionButton(BuildContext context) {
-    return CustomButton(
-      text: selectedPod != null ? 'CONFIRM SELECTION' : 'SELECT A POD',
-      onPressed: selectedPod != null ? () {
-        // Handle confirmation
-      } : null,
-    );
-  }
+Widget _buildActionButton(BuildContext context) {
+  return CustomButton(
+    text: selectedPod != null ? 'CONFIRM SELECTION' : 'SELECT A POD',
+    onPressed: selectedPod != null
+        ? () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Scaffold(
+                  appBar: AppBar(
+                    title: Text('OTP Verification'),
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ),
+                    body: Center(
+                      child: Container(
+                      
+                      padding: EdgeInsets.all(24),
+                      width: MediaQuery.of(context).size.width*0.45,
+                      child: Center(
+                        child: SingleChildScrollView(
+                          child: Card(
+                            elevation: 8,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(32),
+                              child: OTPForm(), // Your existing OTPForm unchanged
+                            ),
+                          ),
+                        ),
+                      ),
+                                        ),
+                    ),
+                ),
+              ),
+            );
+          }
+        : null,
+  );
+}
 }
