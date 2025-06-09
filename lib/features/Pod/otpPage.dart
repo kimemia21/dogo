@@ -1,5 +1,6 @@
 import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppColors.dart';
+import 'package:dogo/data/models/Pod_sessions.dart';
 import 'package:dogo/features/Pod/PodSession.dart';
 import 'package:dogo/features/Regestration/RegestrationForm.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,6 @@ class _OTPFormState extends State<OTPForm> {
   }
 
   void _validateOTP() async {
-     Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PodSessionHomepage()),
-        );
-    // Use the built-in validation
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -39,24 +35,56 @@ class _OTPFormState extends State<OTPForm> {
 
     try {
       final response = await comms.postRequest(
-        endpoint: "pod-sessions/${booking.sessionId}/otp",
-        data: {"otp": otpController.text},
+        endpoint: "pod-sessions/otp",
+        data: {"otp": otpController.text.toUpperCase()},
       );
 
       setState(() {
         _isLoading = false;
       });
+      print(response);
 
-      if (response["rsp"]["success"]) {
+      if (response["success"]) {
+        print(response["rsp"]["data"]);
+        final PodSession session = PodSession.fromMap(response["rsp"]["data"]);
+
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PodSessionHomepage()),
+          MaterialPageRoute(builder: (context) => PodSessionHomepage(session: session)),
         );
       } else {
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response["rsp"]["message"] ?? "Invalid OTP"),
-            backgroundColor: Colors.red,
+            content: Row(
+              children: [
+          Icon(Icons.error_outline, color: Colors.white),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              response["data"]["message"],
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+              ],
+            ),
+            backgroundColor: Colors.red.shade700,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: EdgeInsets.all(12),
+            duration: Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Dismiss',
+              textColor: Colors.white,
+              onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
           ),
         );
       }
@@ -64,11 +92,9 @@ class _OTPFormState extends State<OTPForm> {
       setState(() {
         _isLoading = false;
       });
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Network error. Please try again."),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text("$e"), backgroundColor: Colors.red),
       );
     }
   }
@@ -80,7 +106,7 @@ class _OTPFormState extends State<OTPForm> {
     final isWeb = screenWidth > 600;
     final isMobile = screenWidth <= 600;
     final isTablet = screenWidth > 600 && screenWidth <= 1024;
-    
+
     // Responsive dimensions
     double getFormWidth() {
       if (screenWidth > 1200) return 400; // Desktop large
@@ -88,19 +114,19 @@ class _OTPFormState extends State<OTPForm> {
       if (screenWidth > 600) return screenWidth * 0.6; // Small tablet
       return screenWidth * 0.9; // Mobile
     }
-    
+
     double getHorizontalPadding() {
       if (screenWidth > 1200) return 24;
       if (screenWidth > 600) return 20;
       return 16;
     }
-    
+
     double getVerticalSpacing() {
       if (screenHeight < 600) return 16; // Compact screens
       if (isWeb) return 32;
       return 24;
     }
-    
+
     double getFontSize() {
       if (screenWidth > 1200) return 22;
       if (isWeb) return 20;
@@ -136,7 +162,9 @@ class _OTPFormState extends State<OTPForm> {
                       children: [
                         Text(
                           'Enter Your OTP',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineMedium?.copyWith(
                             fontSize: isWeb ? 28 : 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -145,7 +173,9 @@ class _OTPFormState extends State<OTPForm> {
                         SizedBox(height: 12),
                         Text(
                           'Please enter the 6-digit code provided during registration',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
                             fontSize: isWeb ? 16 : 14,
                             color: Colors.grey[600],
                           ),
@@ -153,9 +183,9 @@ class _OTPFormState extends State<OTPForm> {
                         ),
                       ],
                     ),
-                    
+
                     SizedBox(height: getVerticalSpacing()),
-                    
+
                     // OTP Input Field
                     LayoutBuilder(
                       builder: (context, constraints) {
@@ -200,11 +230,11 @@ class _OTPFormState extends State<OTPForm> {
                               horizontal: 16,
                             ),
                           ),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(6),
-                          ],
+                          // keyboardType: TextInputType.number,
+                          // inputFormatters: [
+                          //   FilteringTextInputFormatter.digitsOnly,
+                          //   LengthLimitingTextInputFormatter(6),
+                          // ],
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: getFontSize(),
@@ -214,56 +244,55 @@ class _OTPFormState extends State<OTPForm> {
                         );
                       },
                     ),
-                    
+
                     SizedBox(height: getVerticalSpacing()),
-                    
+
                     // Validate Button
                     _isLoading
                         ? Center(
-                            child: SizedBox(
-                              height: isWeb ? 56 : 48,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                              ),
-                            ),
-                          )
-                        : SizedBox(
+                          child: SizedBox(
                             height: isWeb ? 56 : 48,
-                            child: ElevatedButton(
-                              onPressed: _validateOTP,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: isWeb ? 4 : 2,
+                            child: CircularProgressIndicator(strokeWidth: 3),
+                          ),
+                        )
+                        : SizedBox(
+                          height: isWeb ? 56 : 48,
+                          child: ElevatedButton(
+                            onPressed: _validateOTP,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Text(
-                                'VALIDATE',
-                                style: TextStyle(
-                                  fontSize: isWeb ? 18 : 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  letterSpacing: 1,
-                                ),
+                              elevation: isWeb ? 4 : 2,
+                            ),
+                            child: Text(
+                              'VALIDATE',
+                              style: TextStyle(
+                                fontSize: isWeb ? 18 : 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 1,
                               ),
                             ),
                           ),
-                    
+                        ),
+
                     SizedBox(height: isWeb ? 24 : 16),
-                    
+
                     // Registration Link
                     TextButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PodBookingPage(),
-                                ),
-                              );
-                            },
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PodBookingPage(),
+                                  ),
+                                );
+                              },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(
                           vertical: isWeb ? 16 : 12,
@@ -278,7 +307,7 @@ class _OTPFormState extends State<OTPForm> {
                         ),
                       ),
                     ),
-                    
+
                     // Additional spacing for web
                     if (isWeb) SizedBox(height: 20),
                   ],

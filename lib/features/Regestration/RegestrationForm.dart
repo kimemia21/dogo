@@ -239,6 +239,7 @@ class _PodBookingPageState extends State<PodBookingPage> {
             color: Colors.grey[600],
           ),
           textAlign: TextAlign.center,
+          
         ),
       ],
     );

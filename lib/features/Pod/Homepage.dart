@@ -14,25 +14,15 @@ class _HomePageState extends State<HomePage>
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _hoursController = TextEditingController();
 
-  bool _isRegistering = false;
-  bool _showValidationResult = false;
-  String _validationMessage = '';
-  late TabController _tabController;
+ 
+ 
 
-  // Sample data for demo - Consider moving this to a service/repository class
-  Map<String, Map<String, dynamic>> _podSessions = {
-    "123456": {
-      "phone": "+1234567890",
-      "timeIn": DateTime.now().subtract(Duration(hours: 1)),
-      "duration": Duration(hours: 3),
-      "isValid": true,
-    },
-  };
+
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+  
   }
 
   @override
@@ -40,7 +30,7 @@ class _HomePageState extends State<HomePage>
     _otpController.dispose();
     _phoneController.dispose();
     _hoursController.dispose();
-    _tabController.dispose();
+   
     super.dispose();
   }
 

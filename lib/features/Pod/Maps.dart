@@ -1,4 +1,6 @@
+import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppTheme.dart';
+import 'package:dogo/features/Pod/Homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -20,7 +22,8 @@ class LandingPage extends StatefulWidget {
   _LandingPageState createState() => _LandingPageState();
 }
 
-class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin {
+class _LandingPageState extends State<LandingPage>
+    with TickerProviderStateMixin {
   final MapController mapController = MapController();
   late AnimationController _animationController;
   late AnimationController _fadeController;
@@ -28,7 +31,7 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
   late Animation<double> _slideAnimation;
   bool _isMapInteractive = false;
   bool _hasActiveBooking = false; // Simulate user booking state
-  
+
   // Sample work pod locations in Nairobi
   final List<WorkPodLocation> workPods = [
     WorkPodLocation(
@@ -39,7 +42,8 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
       reviews: 324,
       price: 'KSh 500/hour',
       image: 'https://images.unsplash.com/photo-1497366216548-37526070297c',
-      description: 'Premium co-working space in the heart of Nairobi with state-of-the-art facilities.',
+      description:
+          'Premium co-working space in the heart of Nairobi with state-of-the-art facilities.',
       hours: '24/7',
       phone: '+254 700 123 456',
     ),
@@ -51,7 +55,8 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
       reviews: 189,
       price: 'KSh 400/hour',
       image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36',
-      description: 'Inspiring creative workspace designed for designers, artists, and freelancers.',
+      description:
+          'Inspiring creative workspace designed for designers, artists, and freelancers.',
       hours: '6AM - 10PM',
       phone: '+254 700 789 012',
     ),
@@ -63,7 +68,8 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
       reviews: 256,
       price: 'KSh 600/hour',
       image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72',
-      description: 'Exclusive premium workspace for startups, entrepreneurs, and established businesses.',
+      description:
+          'Exclusive premium workspace for startups, entrepreneurs, and established businesses.',
       hours: '24/7',
       phone: '+254 700 345 678',
     ),
@@ -87,7 +93,7 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
       CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
     );
     _animationController.forward();
-    
+
     // Simulate checking if user has active booking
     Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
@@ -110,7 +116,7 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
     final isDesktop = screenWidth > 1200;
     final isTablet = screenWidth > 768 && screenWidth <= 1200;
     final isMobile = screenWidth <= 768;
-    
+
     return Scaffold(
       body: Stack(
         children: [
@@ -120,10 +126,7 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  
-                  Colors.white,
-                ],
+                colors: [Colors.white],
               ),
             ),
           ),
@@ -135,8 +138,6 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
                 _buildHeroSection(theme, isDesktop, isTablet, isMobile),
                 _buildMapSection(theme, isDesktop, isTablet, isMobile),
                 _buildFeaturesSection(theme, isDesktop, isTablet, isMobile),
-             
-             
               ],
             ),
           ),
@@ -161,7 +162,10 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
+                colors: [
+                  theme.primaryColor,
+                  theme.primaryColor.withOpacity(0.8),
+                ],
               ),
               borderRadius: BorderRadius.circular(25),
               boxShadow: [
@@ -212,7 +216,12 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildHeroSection(ThemeData theme, bool isDesktop, bool isTablet, bool isMobile) {
+  Widget _buildHeroSection(
+    ThemeData theme,
+    bool isDesktop,
+    bool isTablet,
+    bool isMobile,
+  ) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: AnimatedBuilder(
@@ -235,7 +244,10 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
                         padding: EdgeInsets.all(isMobile ? 10 : 15),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
+                            colors: [
+                              theme.primaryColor,
+                              theme.primaryColor.withOpacity(0.8),
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
@@ -282,7 +294,9 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
                     child: Text(
                       'Discover premium workspaces across Kenya with verified amenities, flexible booking, and professional environments designed for your success.',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                          0.8,
+                        ),
                         fontSize: isMobile ? 16 : 18,
                         height: 1.6,
                       ),
@@ -290,7 +304,6 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
                     ),
                   ),
                   SizedBox(height: isMobile ? 40 : 50),
-               
                 ],
               ),
             ),
@@ -300,7 +313,12 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildMapSection(ThemeData theme, bool isDesktop, bool isTablet, bool isMobile) {
+  Widget _buildMapSection(
+    ThemeData theme,
+    bool isDesktop,
+    bool isTablet,
+    bool isMobile,
+  ) {
     return Container(
       height: isMobile ? 400 : (isTablet ? 500 : 600),
       margin: EdgeInsets.symmetric(
@@ -347,39 +365,52 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'com.workpod.app',
                     ),
                     MarkerLayer(
-                      markers: workPods.map((pod) => Marker(
-                        point: pod.position,
-                        width: 60,
-                        height: 60,
-                        child: GestureDetector(
-                          onTap: () => _showPodDetails(pod, theme),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
-                              ),
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 4),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: theme.primaryColor.withOpacity(0.3),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 5),
+                      markers:
+                          workPods
+                              .map(
+                                (pod) => Marker(
+                                  point: pod.position,
+                                  width: 60,
+                                  height: 60,
+                                  child: GestureDetector(
+                                    onTap: () => _showPodDetails(pod, theme),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            theme.primaryColor,
+                                            theme.primaryColor.withOpacity(0.8),
+                                          ],
+                                        ),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 4,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: theme.primaryColor
+                                                .withOpacity(0.3),
+                                            blurRadius: 10,
+                                            offset: Offset(0, 5),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        Icons.work,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.work,
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                          ),
-                        ),
-                      )).toList(),
+                              )
+                              .toList(),
                     ),
                   ],
                 ),
@@ -396,7 +427,9 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.95),
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: theme.primaryColor.withOpacity(0.1)),
+                    border: Border.all(
+                      color: theme.primaryColor.withOpacity(0.1),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
@@ -413,7 +446,11 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
                           color: theme.primaryColor.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.touch_app, color: theme.primaryColor, size: 20),
+                        child: Icon(
+                          Icons.touch_app,
+                          color: theme.primaryColor,
+                          size: 20,
+                        ),
                       ),
                       SizedBox(width: 12),
                       Expanded(
@@ -471,7 +508,12 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildFeaturesSection(ThemeData theme, bool isDesktop, bool isTablet, bool isMobile) {
+  Widget _buildFeaturesSection(
+    ThemeData theme,
+    bool isDesktop,
+    bool isTablet,
+    bool isMobile,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 20 : (isTablet ? 40 : 60),
@@ -502,11 +544,35 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
           if (isDesktop)
             Row(
               children: [
-                Expanded(child: _buildFeatureCard(Icons.search, 'Smart Search', 'AI-powered location matching based on your preferences and work style', theme, false)),
+                Expanded(
+                  child: _buildFeatureCard(
+                    Icons.search,
+                    'Smart Search',
+                    'AI-powered location matching based on your preferences and work style',
+                    theme,
+                    false,
+                  ),
+                ),
                 SizedBox(width: 30),
-                Expanded(child: _buildFeatureCard(Icons.verified_user, 'Verified Spaces', 'All workspaces are professionally verified with quality assurance', theme, false)),
+                Expanded(
+                  child: _buildFeatureCard(
+                    Icons.verified_user,
+                    'Verified Spaces',
+                    'All workspaces are professionally verified with quality assurance',
+                    theme,
+                    false,
+                  ),
+                ),
                 SizedBox(width: 30),
-                Expanded(child: _buildFeatureCard(Icons.star, 'Premium Quality', 'Curated selection of high-end amenities and professional environments', theme, false)),
+                Expanded(
+                  child: _buildFeatureCard(
+                    Icons.star,
+                    'Premium Quality',
+                    'Curated selection of high-end amenities and professional environments',
+                    theme,
+                    false,
+                  ),
+                ),
               ],
             )
           else if (isTablet)
@@ -514,27 +580,67 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
               children: [
                 Row(
                   children: [
-                    Expanded(child: _buildFeatureCard(Icons.search, 'Smart Search', 'AI-powered location matching based on your preferences and work style', theme, true)),
+                    Expanded(
+                      child: _buildFeatureCard(
+                        Icons.search,
+                        'Smart Search',
+                        'AI-powered location matching based on your preferences and work style',
+                        theme,
+                        true,
+                      ),
+                    ),
                     SizedBox(width: 20),
-                    Expanded(child: _buildFeatureCard(Icons.verified_user, 'Verified Spaces', 'All workspaces are professionally verified with quality assurance', theme, true)),
+                    Expanded(
+                      child: _buildFeatureCard(
+                        Icons.verified_user,
+                        'Verified Spaces',
+                        'All workspaces are professionally verified with quality assurance',
+                        theme,
+                        true,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 20),
                 Container(
                   width: double.infinity,
                   constraints: BoxConstraints(maxWidth: 400),
-                  child: _buildFeatureCard(Icons.star, 'Premium Quality', 'Curated selection of high-end amenities and professional environments', theme, true),
+                  child: _buildFeatureCard(
+                    Icons.star,
+                    'Premium Quality',
+                    'Curated selection of high-end amenities and professional environments',
+                    theme,
+                    true,
+                  ),
                 ),
               ],
             )
           else
             Column(
               children: [
-                _buildFeatureCard(Icons.search, 'Smart Search', 'AI-powered location matching based on your preferences and work style', theme, true),
+                _buildFeatureCard(
+                  Icons.search,
+                  'Smart Search',
+                  'AI-powered location matching based on your preferences and work style',
+                  theme,
+                  true,
+                ),
                 SizedBox(height: 20),
-                _buildFeatureCard(Icons.verified_user, 'Verified Spaces', 'All workspaces are professionally verified with quality assurance', theme, true),
+                _buildFeatureCard(
+                  Icons.verified_user,
+                  'Verified Spaces',
+                  'All workspaces are professionally verified with quality assurance',
+                  theme,
+                  true,
+                ),
                 SizedBox(height: 20),
-                _buildFeatureCard(Icons.star, 'Premium Quality', 'Curated selection of high-end amenities and professional environments', theme, true),
+                _buildFeatureCard(
+                  Icons.star,
+                  'Premium Quality',
+                  'Curated selection of high-end amenities and professional environments',
+                  theme,
+                  true,
+                ),
               ],
             ),
         ],
@@ -542,7 +648,13 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildFeatureCard(IconData icon, String title, String description, ThemeData theme, bool isMobile) {
+  Widget _buildFeatureCard(
+    IconData icon,
+    String title,
+    String description,
+    ThemeData theme,
+    bool isMobile,
+  ) {
     return Container(
       padding: EdgeInsets.all(isMobile ? 24 : 32),
       decoration: BoxDecoration(
@@ -564,11 +676,18 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [theme.primaryColor.withOpacity(0.1), theme.primaryColor.withOpacity(0.05)],
+                colors: [
+                  theme.primaryColor.withOpacity(0.1),
+                  theme.primaryColor.withOpacity(0.05),
+                ],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Icon(icon, size: isMobile ? 32 : 40, color: theme.primaryColor),
+            child: Icon(
+              icon,
+              size: isMobile ? 32 : 40,
+              color: theme.primaryColor,
+            ),
           ),
           SizedBox(height: 24),
           Text(
@@ -592,8 +711,6 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
       ),
     );
   }
-
-
 
   Widget _buildStatItem(String number, String label, Color color) {
     return Column(
@@ -620,314 +737,354 @@ class _LandingPageState extends State<LandingPage> with TickerProviderStateMixin
     );
   }
 
-  
   void _showPodDetails(WorkPodLocation pod, ThemeData theme) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-          ),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Handle bar
-                  Center(
-                    child: Container(
-                      width: 50,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+      builder:
+          (context) => DraggableScrollableSheet(
+            initialChildSize: 0.7,
+            maxChildSize: 0.9,
+            minChildSize: 0.5,
+            builder:
+                (context, scrollController) => Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25),
                     ),
                   ),
-                  SizedBox(height: 24),
-                  
-                  // Header with image and basic info
-                  Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                        image: NetworkImage(pod.image),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.7),
-                          ],
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              pod.name,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Handle bar
+                          Center(
+                            child: Container(
+                              width: 50,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(2),
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.amber, size: 20),
-                                SizedBox(width: 4),
-                                Text(
-                                  '${pod.rating} (${pod.reviews} reviews)',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
+                          ),
+                          SizedBox(height: 24),
+
+                          // Header with image and basic info
+                          Container(
+                            height: 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                image: NetworkImage(pod.image),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.7),
+                                  ],
                                 ),
-                                Spacer(),
-                                Text(
-                                  pod.price,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      pod.name,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                          size: 20,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          '${pod.rating} (${pod.reviews} reviews)',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          pod.price,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  
-                  // Description
-                  Text(
-                    'About',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.primaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    pod.description,
-                    style: TextStyle(
-                      fontSize: 16,
-                      height: 1.6,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  
-                  // Amenities
-                  Text(
-                    'Amenities',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.primaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: pod.amenities.map((amenity) => Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: theme.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        amenity,
-                        style: TextStyle(
-                          color: theme.primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )).toList(),
-                  ),
-                  SizedBox(height: 24),
-                  
-                  // Contact info
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Hours',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: theme.primaryColor,
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Text(pod.hours),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Contact',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: theme.primaryColor,
+                          ),
+                          SizedBox(height: 24),
+
+                          // Description
+                          Text(
+                            'About',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.primaryColor,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            pod.description,
+                            style: TextStyle(
+                              fontSize: 16,
+                              height: 1.6,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 24),
+
+                          // Amenities
+                          Text(
+                            'Amenities',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.primaryColor,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children:
+                                pod.amenities
+                                    .map(
+                                      (amenity) => Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: theme.primaryColor.withOpacity(
+                                            0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          amenity,
+                                          style: TextStyle(
+                                            color: theme.primaryColor,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                          SizedBox(height: 24),
+
+                          // Contact info
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Hours',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.primaryColor,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(pod.hours),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Contact',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.primaryColor,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(pod.phone),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 32),
+
+                          // Book button
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // podId = 1;
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(),
+                                  ),
+                                );
+                                // _showBookingDialog(pod, theme);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.primaryColor,
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                              ),
+                              child: Text(
+                                'Book Now',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Text(pod.phone),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 32),
-                  
-                  // Book button
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _showBookingDialog(pod, theme);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.primaryColor,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      child: Text(
-                        'Book Now',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
           ),
-        ),
-      ),
     );
   }
 
   void _showBookingDialog(WorkPodLocation pod, ThemeData theme) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Book ${pod.name}'),
-        content: Text('Booking functionality would be implemented here with date/time selection and payment integration.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Text('Book ${pod.name}'),
+            content: Text(
+              'Booking functionality would be implemented here with date/time selection and payment integration.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Booking confirmed for ${pod.name}!'),
+                      backgroundColor: theme.primaryColor,
+                    ),
+                  );
+                },
+                child: Text('Confirm Booking'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Booking confirmed for ${pod.name}!'),
-                  backgroundColor: theme.primaryColor,
-                ),
-              );
-            },
-            child: Text('Confirm Booking'),
-          ),
-        ],
-      ),
     );
   }
 
   void _showActiveBookingDetails(ThemeData theme) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-              ),
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            SizedBox(width: 12),
-            Text('Active Session'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('TechHub Nairobi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            SizedBox(height: 8),
-            Text('Started: 2:30 PM'),
-            Text('Duration: 2 hours'),
-            Text('Ends: 4:30 PM'),
-            SizedBox(height: 16),
-            LinearProgressIndicator(
-              value: 0.6,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
-            ),
-            SizedBox(height: 8),
-            Text('60% complete', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Session extended by 1 hour'),
-                  backgroundColor: theme.primaryColor,
+            title: Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              );
-            },
-            child: Text('Extend Session'),
+                SizedBox(width: 12),
+                Text('Active Session'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'TechHub Nairobi',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                SizedBox(height: 8),
+                Text('Started: 2:30 PM'),
+                Text('Duration: 2 hours'),
+                Text('Ends: 4:30 PM'),
+                SizedBox(height: 16),
+                LinearProgressIndicator(
+                  value: 0.6,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '60% complete',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Close'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Session extended by 1 hour'),
+                      backgroundColor: theme.primaryColor,
+                    ),
+                  );
+                },
+                child: Text('Extend Session'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }
