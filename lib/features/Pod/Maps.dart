@@ -9,7 +9,7 @@ class WorkPodApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WorkPod - Find Your Perfect Workspace',
+      title: 'Dogo Pods - Find Your Perfect Workspace',
       theme: AppTheme.lightTheme,
       home: LandingPage(),
       debugShowCheckedModeBanner: false,
@@ -266,7 +266,7 @@ class _LandingPageState extends State<LandingPage>
                       ),
                       SizedBox(width: 15),
                       Text(
-                        'WorkPod',
+                        'Dogo Pod',
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: theme.primaryColor,

@@ -15,6 +15,20 @@ class PodSession {
     required this.isValid,
   });
 
+
+
+    factory PodSession.empty() {
+    final now = DateTime.now();
+    return PodSession(
+      sessId: '',
+      phone: '',
+      timeIn: now,
+      timeOut: now.add(Duration(minutes: 5)),
+      duration:Duration(minutes: 5),
+      isValid: true,
+    );
+  }
+
   Duration get timeRemaining {
     final now = DateTime.now();
     final remaining = timeOut.difference(now);

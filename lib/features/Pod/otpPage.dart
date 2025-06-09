@@ -1,6 +1,7 @@
 import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppColors.dart';
 import 'package:dogo/data/models/Pod_sessions.dart';
+import 'package:dogo/data/services/localHost.dart';
 import 'package:dogo/features/Pod/PodSession.dart';
 import 'package:dogo/features/Regestration/RegestrationForm.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,14 @@ class _OTPFormState extends State<OTPForm> {
   }
 
   void _validateOTP() async {
+    // TESTING BYPASS
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PodSessionHomepage(session: PodSession.empty()),
+      ),
+    );
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -46,29 +55,38 @@ class _OTPFormState extends State<OTPForm> {
 
       if (response["success"]) {
         print(response["rsp"]["data"]);
-        final PodSession session = PodSession.fromMap(response["rsp"]["data"]);
 
-        Navigator.push(
+        final PodSession session = PodSession.fromMap(response["rsp"]["data"]);
+        comms.setAuthToken(response["AuthToken"]);
+        Map<String, dynamic> data = {
+          "user": "John",
+          "duration": 2,
+          "interval": 1,
+          "startNow": true,
+           "sessionid":"232112"
+        };
+        
+  Localhost.postToLocalhost("/api/start", data);
+
+  Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PodSessionHomepage(session: session)),
+          MaterialPageRoute(
+            builder: (context) => PodSessionHomepage(session: session),
+          ),
         );
       } else {
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-          Icon(Icons.error_outline, color: Colors.white),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              response["data"]["message"],
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
+                Icon(Icons.error_outline, color: Colors.white),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    response["data"]["message"],
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ),
               ],
             ),
             backgroundColor: Colors.red.shade700,
@@ -82,7 +100,7 @@ class _OTPFormState extends State<OTPForm> {
               label: 'Dismiss',
               textColor: Colors.white,
               onPressed: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
               },
             ),
           ),

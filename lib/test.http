@@ -1,9 +1,11 @@
 POST  http://167.99.15.36:8001/api/pod-sessions/otp
 Content-Type: application/json
-
 {
-    "otp": "GENG6E"
+    "otp": "BC4Y7L"
 }
+
+
+
 ###
 
 POST  http://167.99.15.36:8001/api/pods/slots

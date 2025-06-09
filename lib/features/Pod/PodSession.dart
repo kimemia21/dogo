@@ -1,4 +1,5 @@
 import 'package:dogo/data/models/Pod_sessions.dart';
+import 'package:dogo/data/services/localHost.dart';
 import 'package:flutter/material.dart';
 import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppColors.dart';
@@ -63,6 +64,8 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
   void _showSessionEndedAlert() {
     if (!mounted) return;
     
+    Localhost.postToLocalhost("api/start", {});
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -116,14 +119,14 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
                 children: [
                   _buildHeader(screenWidth),
                   SizedBox(height: _getSpacing(screenWidth, large: true)),
-                  
+
                   if (isDesktop)
                     _buildDesktopLayout(screenWidth)
                   else if (isTablet)
                     _buildTabletLayout(screenWidth)
                   else
                     _buildMobileLayout(screenWidth),
-                  
+
                   SizedBox(height: _getSpacing(screenWidth)),
                   _buildFooter(screenWidth),
                 ],
@@ -156,7 +159,9 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  _errorMessage.isEmpty ? 'Unknown error occurred' : _errorMessage,
+                  _errorMessage.isEmpty
+                      ? 'Unknown error occurred'
+                      : _errorMessage,
                   style: Theme.of(context).textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ),
@@ -175,23 +180,24 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
 
   Widget _buildHeader(double screenWidth) {
     final isLarge = screenWidth > 600;
-    
+
     return Column(
       children: [
         Text(
-          widget.session.isExpired 
-            ? 'Pod Session Ended' 
-            : widget.session.isActive 
+          widget.session.isExpired
+              ? 'Pod Session Ended'
+              : widget.session.isActive
               ? 'Pod Session Active'
               : 'Pod Session Waiting',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
             fontSize: isLarge ? 36 : 28,
             fontWeight: FontWeight.bold,
-            color: widget.session.isExpired
-                ? Colors.red
-                : widget.session.isActive
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.orange,
+            color:
+                widget.session.isExpired
+                    ? Colors.red
+                    : widget.session.isActive
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.orange,
           ),
           textAlign: TextAlign.center,
         ),
@@ -335,7 +341,7 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
     double screenWidth,
   ) {
     final isLarge = screenWidth > 600;
-    
+
     return Container(
       padding: EdgeInsets.all(isLarge ? 24 : 20),
       decoration: BoxDecoration(
@@ -384,7 +390,7 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
   Widget _buildProgressBar(double screenWidth) {
     final isLarge = screenWidth > 600;
     final progress = widget.session.progressPercentage;
-    
+
     return Column(
       children: [
         Text(
@@ -430,7 +436,7 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
   Widget _buildSessionInfo(double screenWidth) {
     final isLarge = screenWidth > 600;
     final isMobile = screenWidth <= 480;
-    
+
     return Container(
       padding: EdgeInsets.all(isLarge ? 20 : 16),
       decoration: BoxDecoration(
@@ -438,54 +444,55 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.border),
       ),
-      child: isMobile 
-        ? Column(
-            children: [
-              _buildInfoItem(
-                'Start Time',
-                _formatTime24Hour(widget.session.timeIn),
-                Icons.play_circle_outline,
-                screenWidth,
+      child:
+          isMobile
+              ? Column(
+                children: [
+                  _buildInfoItem(
+                    'Start Time',
+                    _formatTime24Hour(widget.session.timeIn),
+                    Icons.play_circle_outline,
+                    screenWidth,
+                  ),
+                  SizedBox(height: 16),
+                  _buildInfoItem(
+                    'End Time',
+                    _formatTime24Hour(widget.session.timeOut),
+                    Icons.stop_circle_outlined,
+                    screenWidth,
+                  ),
+                  SizedBox(height: 16),
+                  _buildInfoItem(
+                    'Duration',
+                    '${widget.session.duration.inMinutes} min',
+                    Icons.schedule,
+                    screenWidth,
+                  ),
+                ],
+              )
+              : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildInfoItem(
+                    'Start Time',
+                    _formatTime24Hour(widget.session.timeIn),
+                    Icons.play_circle_outline,
+                    screenWidth,
+                  ),
+                  _buildInfoItem(
+                    'End Time',
+                    _formatTime24Hour(widget.session.timeOut),
+                    Icons.stop_circle_outlined,
+                    screenWidth,
+                  ),
+                  _buildInfoItem(
+                    'Duration',
+                    '${widget.session.duration.inMinutes} min',
+                    Icons.schedule,
+                    screenWidth,
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              _buildInfoItem(
-                'End Time',
-                _formatTime24Hour(widget.session.timeOut),
-                Icons.stop_circle_outlined,
-                screenWidth,
-              ),
-              SizedBox(height: 16),
-              _buildInfoItem(
-                'Duration',
-                '${widget.session.duration.inMinutes} min',
-                Icons.schedule,
-                screenWidth,
-              ),
-            ],
-          )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildInfoItem(
-                'Start Time',
-                _formatTime24Hour(widget.session.timeIn),
-                Icons.play_circle_outline,
-                screenWidth,
-              ),
-              _buildInfoItem(
-                'End Time',
-                _formatTime24Hour(widget.session.timeOut),
-                Icons.stop_circle_outlined,
-                screenWidth,
-              ),
-              _buildInfoItem(
-                'Duration',
-                '${widget.session.duration.inMinutes} min',
-                Icons.schedule,
-                screenWidth,
-              ),
-            ],
-          ),
     );
   }
 
@@ -496,7 +503,7 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
     double screenWidth,
   ) {
     final isLarge = screenWidth > 600;
-    
+
     return Column(
       children: [
         Icon(
@@ -527,16 +534,17 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
 
   Widget _buildFooter(double screenWidth) {
     final isLarge = screenWidth > 600;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: isLarge ? 16 : 12,
         horizontal: isLarge ? 20 : 16,
       ),
       decoration: BoxDecoration(
-        color: widget.session.isExpired
-            ? Colors.red.withOpacity(0.1)
-            : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+        color:
+            widget.session.isExpired
+                ? Colors.red.withOpacity(0.1)
+                : Theme.of(context).colorScheme.secondary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -545,9 +553,10 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
           Icon(
             widget.session.isExpired ? Icons.check_circle : Icons.info_outline,
             size: isLarge ? 20 : 18,
-            color: widget.session.isExpired
-                ? Colors.red
-                : Theme.of(context).colorScheme.secondary,
+            color:
+                widget.session.isExpired
+                    ? Colors.red
+                    : Theme.of(context).colorScheme.secondary,
           ),
           SizedBox(width: 8),
           Expanded(
@@ -557,9 +566,10 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
                   : 'Session will end automatically at ${_formatTime24Hour(widget.session.timeOut)}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: isLarge ? 14 : 12,
-                color: widget.session.isExpired
-                    ? Colors.red
-                    : Theme.of(context).colorScheme.secondary,
+                color:
+                    widget.session.isExpired
+                        ? Colors.red
+                        : Theme.of(context).colorScheme.secondary,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
@@ -588,7 +598,7 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
   String _formatDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
-    
+
     if (hours > 0) {
       return '${hours.toString().padLeft(1, '0')}h ${minutes.toString().padLeft(2, '0')}m';
     } else {
@@ -598,7 +608,7 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
 
   String _formatDurationWithSeconds(Duration duration) {
     if (duration == Duration.zero) return '00:00';
-    
+
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
