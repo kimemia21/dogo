@@ -1,7 +1,6 @@
 import 'package:dogo/data/models/Pod_sessions.dart';
 import 'package:dogo/data/services/localHost.dart';
 import 'package:flutter/material.dart';
-import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppColors.dart';
 import 'dart:async';
 
@@ -63,7 +62,7 @@ class _PodSessionHomepageState extends State<PodSessionHomepage> {
 
   void _showSessionEndedAlert() {
     if (!mounted) return;
-    
+
     Localhost.postToLocalhost("api/start", {});
 
     showDialog(

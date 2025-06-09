@@ -3,14 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:dogo/core/constants/credentials.dart';
 import 'package:flutter/foundation.dart';
 
-
 class Comms {
-
   static final Comms _instance = Comms._internal();
   factory Comms() => _instance;
-  
+
   late final Dio _dio;
-  
 
   Comms._internal() {
     _dio = Dio(
@@ -18,19 +15,19 @@ class Comms {
         baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
       ),
     );
-    
+
     // Add logging interceptor only in debug mode
     if (kDebugMode) {
-      _dio.interceptors.add(LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        logPrint: (obj) => debugPrint(obj.toString()),
-      ));
+      _dio.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          responseBody: true,
+          logPrint: (obj) => debugPrint(obj.toString()),
+        ),
+      );
     }
   }
 
@@ -48,7 +45,7 @@ class Comms {
   Map<String, dynamic> _handleErrorResponse(Response response) {
     final statusCode = response.statusCode;
     final data = response.data;
-    
+
     String message;
     switch (statusCode) {
       case 400:
@@ -58,7 +55,8 @@ class Comms {
         message = 'Unauthorized: Please check your credentials';
         break;
       case 403:
-        message = 'Forbidden: You don\'t have permission to access this resource';
+        message =
+            'Forbidden: You don\'t have permission to access this resource';
         break;
       case 404:
         message = 'Resource not found';
@@ -72,29 +70,29 @@ class Comms {
       default:
         message = 'Error $statusCode occurred';
     }
-    
+
     return {
       "success": false,
       "rsp": message,
       "data": data,
-      "statusCode": statusCode
+      "statusCode": statusCode,
     };
   }
 
   /// Extract error message from different response formats
   String? _extractErrorMessage(dynamic data) {
     if (data == null) return null;
-    
+
     if (data is Map) {
       // Check common error message fields
-      return data['message'] ?? 
-             data['error'] ?? 
-             data['errorMessage'] ?? 
-             data['error_message'];
+      return data['message'] ??
+          data['error'] ??
+          data['errorMessage'] ??
+          data['error_message'];
     } else if (data is String) {
       return data;
     }
-    
+
     return null;
   }
 
@@ -105,19 +103,19 @@ class Comms {
         return {
           "success": false,
           "rsp": "Connection timeout. Please check your internet connection.",
-          "statusCode": e.response?.statusCode
+          "statusCode": e.response?.statusCode,
         };
       case DioExceptionType.receiveTimeout:
         return {
           "success": false,
           "rsp": "Server taking too long to respond. Please try again.",
-          "statusCode": e.response?.statusCode
+          "statusCode": e.response?.statusCode,
         };
       case DioExceptionType.sendTimeout:
         return {
           "success": false,
           "rsp": "Request timeout. Please try again.",
-          "statusCode": e.response?.statusCode
+          "statusCode": e.response?.statusCode,
         };
       case DioExceptionType.badResponse:
         if (e.response != null) {
@@ -126,19 +124,19 @@ class Comms {
         return {
           "success": false,
           "rsp": "Server returned an invalid response.",
-          "statusCode": null
+          "statusCode": null,
         };
       case DioExceptionType.cancel:
         return {
           "success": false,
           "rsp": "Request was cancelled.",
-          "statusCode": e.response?.statusCode
+          "statusCode": e.response?.statusCode,
         };
       default:
         return {
           "success": false,
           "rsp": "Network error occurred. Please check your connection.",
-          "statusCode": e.response?.statusCode
+          "statusCode": e.response?.statusCode,
         };
     }
   }
@@ -151,7 +149,7 @@ class Comms {
   }) async {
     try {
       final String url = "$baseUrl/$endpoint";
-      
+
       final response = await _dio.get(
         url,
         queryParameters: queryParameters,
@@ -162,7 +160,7 @@ class Comms {
         return {
           "success": true,
           "rsp": response.data,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       } else {
         return _handleErrorResponse(response);
@@ -173,7 +171,7 @@ class Comms {
       return {
         "success": false,
         "rsp": "An unexpected error occurred: ${e.toString()}",
-        "statusCode": null
+        "statusCode": null,
       };
     }
   }
@@ -188,8 +186,10 @@ class Comms {
     bool? isLocal = false,
   }) async {
     try {
-      final String url = isLocal! ? "http://localhost:3000" : "$baseUrl/$endpoint";
-      
+      final String url =
+          isLocal! ? "http://localhost:3000$endpoint" : "$baseUrl/$endpoint";
+      print("---------------$url------------------------");
+
       dynamic requestData = data;
       if (isFormData) {
         final formData = FormData();
@@ -207,11 +207,7 @@ class Comms {
       );
 
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return {
-     
-          "rsp": response.data,
-          "statusCode": response.statusCode
-        };
+        return {"rsp": response.data, "statusCode": response.statusCode};
       } else {
         return _handleErrorResponse(response);
       }
@@ -221,7 +217,7 @@ class Comms {
       return {
         "success": false,
         "rsp": "An unexpected error occurred: ${e.toString()}",
-        "statusCode": null
+        "statusCode": null,
       };
     }
   }
@@ -234,8 +230,8 @@ class Comms {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final String url ="$baseUrl/$endpoint";
-      
+      final String url = "$baseUrl/$endpoint";
+
       final response = await _dio.put(
         url,
         data: data,
@@ -247,7 +243,7 @@ class Comms {
         return {
           "success": true,
           "rsp": response.data,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       } else {
         return _handleErrorResponse(response);
@@ -258,7 +254,7 @@ class Comms {
       return {
         "success": false,
         "rsp": "An unexpected error occurred: ${e.toString()}",
-        "statusCode": null
+        "statusCode": null,
       };
     }
   }
@@ -272,7 +268,7 @@ class Comms {
   }) async {
     try {
       final String url = "$baseUrl/$endpoint";
-      
+
       final response = await _dio.delete(
         url,
         data: data,
@@ -284,7 +280,7 @@ class Comms {
         return {
           "success": true,
           "rsp": response.data,
-          "statusCode": response.statusCode
+          "statusCode": response.statusCode,
         };
       } else {
         return _handleErrorResponse(response);
@@ -295,7 +291,7 @@ class Comms {
       return {
         "success": false,
         "rsp": "An unexpected error occurred: ${e.toString()}",
-        "statusCode": null
+        "statusCode": null,
       };
     }
   }

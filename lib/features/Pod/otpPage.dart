@@ -31,8 +31,17 @@ class _OTPFormState extends State<OTPForm> {
       context,
       MaterialPageRoute(
         builder: (context) => PodSessionHomepage(session: PodSession.empty()),
+
       ),
     );
+     Map<String, dynamic> data = {
+          "user": "John",
+          "duration": 2,
+          "interval": 1,
+          "startNow": true,
+           "sessionid":"232112"
+        };
+Localhost.postToLocalhost("/api/start", data);
 
     if (!_formKey.currentState!.validate()) {
       return;
