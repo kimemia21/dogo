@@ -18,8 +18,8 @@ class Session {
       sessId: "notInitialized",
       sessPaymentStatus: "notInitialized",
       sessDuration: 000000,
-      sessStart: "notInitialized",
-      sessEnd: "notInitialized",
+      sessStart: "15:00:00",
+      sessEnd: "15:35:00",
     );
   }
 

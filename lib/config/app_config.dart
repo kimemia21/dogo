@@ -1,6 +1,7 @@
 import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/data/models/Pod.dart';
 import 'package:dogo/features/Pod/Homepage.dart';
+import 'package:dogo/features/Pod/Maps.dart';
 import 'package:dogo/main.dart';
 import 'package:dogo/features/Pod/select_pod.dart';
 import 'package:flutter/material.dart';
@@ -13,5 +14,7 @@ getPodId() {
 }
 
 Widget getDevice() {
-  return podId != null ? HomePage() : PodSelectionForm() ;
+  return podId != null ?  WorkPodApp():  WorkPodApp();
+  
+  //  HomePage() : PodSelectionForm() ;
 }

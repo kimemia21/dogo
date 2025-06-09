@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/data/models/Session.dart';
 import 'package:dogo/features/Pod/otpPage.dart';
+import 'package:dogo/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 
 void showPaymentSuccessDialog(BuildContext context) {
@@ -92,36 +93,7 @@ void showPaymentSuccessDialog(BuildContext context) {
                       onPressed: () {
                         Navigator.of(context).pop(); // Close success dialog
 
-              Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Scaffold(
-                 
-                    body: Center(
-                      child: Container(
-                      
-                      padding: EdgeInsets.all(24),
-                      width: MediaQuery.of(context).size.width*0.45,
-                      child: Center(
-                        child: SingleChildScrollView(
-                          child: Card(
-                            elevation: 8,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(32),
-                              child: OTPForm(), // Your existing OTPForm unchanged
-                            ),
-                          ),
-                        ),
-                      ),
-                                        ),
-                    ),
-                ),
-              ),
-            );
-                      
+                        navigateToOTPScreen(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green.shade600,
@@ -150,6 +122,7 @@ void showPaymentSuccessDialog(BuildContext context) {
     },
   );
 }
+
 void showMpesaPaymentConfirmationDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -244,7 +217,7 @@ void showMpesaPaymentConfirmationDialog(BuildContext context) {
                           Text(
                             isLoading
                                 ? 'Please wait while we verify your payment...'
-                                : 'Please check your phone for the M-Pesa STK push notification and enter your PIN to complete the payment.',
+                                : 'Please check your phone for a notification and enter your PIN to complete the payment.',
                             style: TextStyle(
                               fontSize: bodyFontSize,
                               color: Colors.grey[600],
@@ -329,44 +302,40 @@ void showMpesaPaymentConfirmationDialog(BuildContext context) {
                                         });
 
                                         try {
-                                          final response = await comms
-                                              .getRequests(
-                                                endpoint:
-                                                    "pod-sessions/${booking.sessionId}/status",
-                                              );
+                                          final response = await comms.getRequests(
+                                            endpoint:
+                                                "pod-sessions/${booking.sessionId}/status",
+                                          );
 
                                           await Future.delayed(
                                             Duration(seconds: 2),
                                           );
 
-                                          if (response["rsp"]["success"]&& response["rsp"]["data"]["sessPaymentStatus"]=="paid") {
-                    
+                                          if (response["rsp"]["success"] &&
+                                              response["rsp"]["data"]["sessPaymentStatus"] ==
+                                                  "paid") {
                                             sess = Session.fromJson(
                                               response["rsp"]["data"],
-                                            ); 
-                                                  setState(() {
+                                            );
+                                            setState(() {
                                               isLoading = false;
-                                                statusMessage =
-                                                  'Success';
+                                              statusMessage = 'Success';
                                             });
-
 
                                             Navigator.of(context).pop();
                                             showPaymentSuccessDialog(context);
-
-                                          }
-                                          else if(response["rsp"]["success"]&& response["rsp"]["data"]["sessPaymentStatus"]=="pending"){
-                                                 setState(() {
-                                              isLoading = false;
-                                                statusMessage =
-                                                  'Please enter your M-PESA PIN to complete payment.';
-                                            });
-                                          }
-                                          
-                                           else {
+                                          } else if (response["rsp"]["success"] &&
+                                              response["rsp"]["data"]["sessPaymentStatus"] ==
+                                                  "pending") {
                                             setState(() {
                                               isLoading = false;
-                                                statusMessage =
+                                              statusMessage =
+                                                  'Please enter your M-PESA PIN to complete payment.';
+                                            });
+                                          } else {
+                                            setState(() {
+                                              isLoading = false;
+                                              statusMessage =
                                                   'Payments Failed Try Again.';
                                             });
                                           }

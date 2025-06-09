@@ -215,14 +215,20 @@ void showMpesaPaymentDialog(BuildContext context) {
                                     ),
                                     SizedBox(width: 8),
                                     Flexible(
-                                      child: Text(
-                                        phoneController.text,
-                                        style: TextStyle(
-                                          fontSize: bodyFontSize,
-                                          color: Colors.green.shade800,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.end,
+                                      child: TextField(
+                                      controller: phoneController,
+                                      keyboardType: TextInputType.phone,
+                                      style: TextStyle(
+                                        fontSize: bodyFontSize,
+                                        color: Colors.green.shade800,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.end,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
                                       ),
                                     ),
                                   ],
@@ -288,7 +294,7 @@ void showMpesaPaymentDialog(BuildContext context) {
                                 SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'You will receive an STK push notification on your phone to complete the payment.',
+                                    'You will receive a notification on your phone to complete the payment.',
                                     style: TextStyle(
                                       fontSize: bodyFontSize - 1,
                                       color: Colors.blue.shade800,

@@ -4,7 +4,6 @@ import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppColors.dart';
 import 'package:dogo/data/models/Pod.dart';
 import 'package:dogo/data/services/FetchGlobals.dart';
-import 'package:dogo/features/Pod/otpPage.dart';
 import 'package:dogo/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -410,46 +409,16 @@ class _PodSelectionFormState extends State<PodSelectionForm>
       ),
     );
   }
-Widget _buildActionButton(BuildContext context) {
-  return CustomButton(
-    text: selectedPod != null ? 'CONFIRM SELECTION' : 'SELECT A POD',
-    onPressed: selectedPod != null
-        ? () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Scaffold(
-                  appBar: AppBar(
-                    title: Text('OTP Verification'),
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                  ),
-                    body: Center(
-                      child: Container(
-                      
-                      padding: EdgeInsets.all(24),
-                      width: MediaQuery.of(context).size.width*0.45,
-                      child: Center(
-                        child: SingleChildScrollView(
-                          child: Card(
-                            elevation: 8,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(32),
-                              child: OTPForm(), // Your existing OTPForm unchanged
-                            ),
-                          ),
-                        ),
-                      ),
-                                        ),
-                    ),
-                ),
-              ),
-            );
-          }
-        : null,
-  );
-}
+
+  Widget _buildActionButton(BuildContext context) {
+    return CustomButton(
+      text: selectedPod != null ? 'CONFIRM SELECTION' : 'SELECT A POD',
+      onPressed:
+          selectedPod != null
+              ? () {
+                navigateToOTPScreen(context);
+              }
+              : null,
+    );
+  }
 }
