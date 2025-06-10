@@ -187,7 +187,7 @@ class Comms {
   }) async {
     try {
       final String url =
-          isLocal! ? "http://localhost:3000$endpoint" : "$baseUrl/$endpoint";
+          isLocal! ? "http://localhost:3000$endpoint":"$baseUrl/$endpoint";
       print("---------------$url------------------------");
 
       dynamic requestData = data;

@@ -202,7 +202,7 @@ class InfoCard extends StatelessWidget {
         color: isHighlighted ? AppColors.infoLight : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isHighlighted ? AppColors.infoBorder : AppColors.borderLight,
+          color: isHighlighted ? AppColors.infoLight : AppColors.borderLight,
         ),
         boxShadow:
             isHighlighted
