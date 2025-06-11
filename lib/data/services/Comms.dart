@@ -146,9 +146,10 @@ class Comms {
     required String endpoint,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
+    bool? isLocal,
   }) async {
     try {
-      final String url = "$baseUrl/$endpoint";
+      final String url = "${isLocal!?"http://192.168.100.74:3000": baseUrl}/$endpoint";
 
       final response = await _dio.get(
         url,
@@ -187,7 +188,9 @@ class Comms {
   }) async {
     try {
       final String url =
-          isLocal! ? "http://localhost:3000$endpoint":"$baseUrl/$endpoint";
+          isLocal!
+              ? "http://192.168.100.74:3000$endpoint"
+              : "$baseUrl/$endpoint";
       print("---------------$url------------------------");
 
       dynamic requestData = data;

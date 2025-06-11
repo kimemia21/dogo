@@ -19,7 +19,8 @@ class Localhost {
 
   static getFromLocalhost() async {
     final response = await comms.getRequests(
-      endpoint: "http://localhost:3000/api/status ",
+      isLocal: true,
+      endpoint: "api/status",
     );
 
     if (response["statuscode"] == 200) {
@@ -28,6 +29,9 @@ class Localhost {
       throw Exception('Failed to post data to localhost');
     }
   }
+
+
+
 
   // static getFromLocalhost(String path) async {
   //   final url = Uri.parse('http://localhost:3000/$path');
