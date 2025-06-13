@@ -4,8 +4,10 @@ import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppColors.dart';
 import 'package:dogo/data/models/Pod.dart';
 import 'package:dogo/data/services/FetchGlobals.dart';
+import 'package:dogo/features/Pod/MyPod.dart';
 import 'package:dogo/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 class PodSelectionForm extends StatefulWidget {
   const PodSelectionForm({Key? key}) : super(key: key);
@@ -416,7 +418,23 @@ class _PodSelectionFormState extends State<PodSelectionForm>
       onPressed:
           selectedPod != null
               ? () {
-                navigateToOTPScreen(context);
+              Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => BookingConfirmedPage(
+      podName: 'TechHub Nairobi',
+      podType: 'Solo Pod',
+      location: 'Westlands, Nairobi',
+      startDate: DateTime(2024, 3, 15),
+      startTime: TimeOfDay(hour: 9, minute: 0),
+      endTime: TimeOfDay(hour: 17, minute: 0),
+      podPosition: LatLng(-1.2921, 36.8219),
+      duration: '8 hours',
+      price: 'KSh 4,000',
+      amenities: ['WiFi', 'Coffee', 'Meeting Rooms', 'Parking'],
+    ),
+  ),
+);
               }
               : null,
     );

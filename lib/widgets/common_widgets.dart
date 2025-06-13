@@ -265,45 +265,49 @@ class InfoCard extends StatelessWidget {
 
 
 
-void navigateToOTPScreen(
-  BuildContext context, {
-  String title = 'OTP Verification',
-  Color? backgroundColor,
-  double elevation = 0,
-  double cardElevation = 8,
-  double cardPadding = 10,
-  double containerPadding = 10,
-}) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-          backgroundColor: backgroundColor ?? Colors.transparent,
-          elevation: elevation,
-        ),
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.all(containerPadding),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Card(
-                  elevation: cardElevation,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(cardPadding),
-                    child: OTPForm(), // Your existing OTPForm
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
+// void navigateToOTPScreen(
+//   BuildContext context, {
+//   String title = 'OTP Verification',
+//   Color? backgroundColor,
+//   double elevation = 0,
+//   double cardElevation = 8,
+//   double cardPadding = 10,
+//   double containerPadding = 10,
+// }) {
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(
+//       builder: (context) => 
+      
+//       // Scaffold(
+//       //   appBar: AppBar(
+//       //     title: Text(title),
+//       //     backgroundColor: backgroundColor ?? Colors.transparent,
+//       //     elevation: elevation,
+//       //   ),
+//       //   body: Center(
+//       //     child: Container(
+//       //       padding: EdgeInsets.all(containerPadding),
+//       //       child: Center(
+//       //         child: SingleChildScrollView(
+//       //           child: Card(
+//       //             elevation: cardElevation,
+//       //             shape: RoundedRectangleBorder(
+//       //               borderRadius: BorderRadius.circular(16),
+//       //             ),
+//       //             child: Padding(
+//       //               padding: EdgeInsets.all(cardPadding),
+//       //               child: OTPForm(), // Your existing OTPForm
+//       //             ),
+//       //           ),
+//       //         ),
+//       //       ),
+//       //     ),
+//       //   ),
+//       // ),
+//     ),
+//   );
+// }
+
+
 

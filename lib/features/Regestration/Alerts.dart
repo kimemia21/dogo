@@ -2,9 +2,11 @@ import 'dart:ui';
 
 import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/data/models/Session.dart';
+import 'package:dogo/features/Pod/MyPod.dart';
 import 'package:dogo/features/Pod/otpPage.dart';
 import 'package:dogo/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 void showPaymentSuccessDialog(BuildContext context) {
   showDialog(
@@ -93,7 +95,23 @@ void showPaymentSuccessDialog(BuildContext context) {
                       onPressed: () {
                         Navigator.of(context).pop(); // Close success dialog
 
-                        navigateToOTPScreen(context);
+                      Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => BookingConfirmedPage(
+      podName: 'TechHub Nairobi',
+      podType: 'Solo Pod',
+      location: 'Westlands, Nairobi',
+      startDate: DateTime(2024, 3, 15),
+      startTime: TimeOfDay(hour: 9, minute: 0),
+      endTime: TimeOfDay(hour: 17, minute: 0),
+      podPosition: LatLng(-1.2921, 36.8219),
+      duration: '8 hours',
+      price: 'KSh 4,000',
+      amenities: ['WiFi', 'Coffee', 'Meeting Rooms', 'Parking'],
+    ),
+  ),
+);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green.shade600,
