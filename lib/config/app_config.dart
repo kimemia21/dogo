@@ -14,7 +14,7 @@ getPodId() {
 }
 
 Widget getDevice() {
-  return podId != null ?  WorkPodApp():  WorkPodApp();
+  return podId != null ?  LandingPage(wasBooked: false,):  LandingPage(wasBooked: false,);
   
   //  HomePage() : PodSelectionForm() ;
 }

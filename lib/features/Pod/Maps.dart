@@ -1,24 +1,13 @@
-import 'package:dogo/core/constants/initializer.dart';
-import 'package:dogo/core/theme/AppTheme.dart';
 import 'package:dogo/features/Pod/Homepage.dart';
+import 'package:dogo/features/Regestration/Booking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-
-class WorkPodApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Dogo Pods - Find Your Perfect Workspace',
-      theme: AppTheme.lightTheme,
-      home: LandingPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
 
 class LandingPage extends StatefulWidget {
+  final bool wasBooked;
+  LandingPage({required this.wasBooked});
+
   @override
   _LandingPageState createState() => _LandingPageState();
 }
@@ -76,14 +65,13 @@ class _LandingPageState extends State<LandingPage>
     ),
   ];
 
-
   final List<String> imgList = [
-  'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Duo-768x1089.png',
-  'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Solo-pod-768x1089.png',
-  'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Mini-Pod-768x1089.png',
-  'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2024/12/LLC-6-768x960.jpg',
-  'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Nap-Pod-2-768x1089.png'
-];
+    'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Duo-768x1089.png',
+    'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Solo-pod-768x1089.png',
+    'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Mini-Pod-768x1089.png',
+    'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2024/12/LLC-6-768x960.jpg',
+    'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Nap-Pod-2-768x1089.png',
+  ];
 
   @override
   void initState() {
@@ -146,8 +134,41 @@ class _LandingPageState extends State<LandingPage>
               children: [
                 SizedBox(height: isMobile ? 40 : 60),
                 _buildHeroSection(theme, isDesktop, isTablet, isMobile),
+                if (widget.wasBooked)
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'You are viewing filtered pods that are available at your selected time',
+                            style: TextStyle(
+                              color: Colors.blue[800],
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 _buildMapSection(theme, isDesktop, isTablet, isMobile),
-                _buildFeaturesSection(theme, isDesktop, isTablet, isMobile),
+                widget.wasBooked
+                    ? SizedBox()
+                    : _buildFeaturesSection(
+                      theme,
+                      isDesktop,
+                      isTablet,
+                      isMobile,
+                    ),
               ],
             ),
           ),
@@ -388,7 +409,21 @@ class _LandingPageState extends State<LandingPage>
                                   width: 60,
                                   height: 60,
                                   child: GestureDetector(
-                                    onTap: () => _showPodDetails(pod, theme),
+                                    onTap: () {
+                                      if (widget.wasBooked) {
+                                        _showPodDetails(pod, theme);
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    TimeSlotDurationScreen(),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    //  _showPodDetails(pod, theme),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -747,576 +782,694 @@ class _LandingPageState extends State<LandingPage>
     );
   }
 
-void _showPodDetails(WorkPodLocation pod, ThemeData theme) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    useSafeArea: true,
-    builder: (context) => DraggableScrollableSheet(
-      initialChildSize: 0.8,
-      maxChildSize: 0.95,
-      minChildSize: 0.6,
-      builder: (context, scrollController) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 15,
-              offset: Offset(0, -5),
-            ),
-          ],
-        ),
-        child: SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Handle bar
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Header with image and basic info
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.25,
+  void _showPodDetails(WorkPodLocation pod, ThemeData theme) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      useSafeArea: true,
+      builder:
+          (context) => DraggableScrollableSheet(
+            initialChildSize: 0.8,
+            maxChildSize: 0.95,
+            minChildSize: 0.6,
+            builder:
+                (context, scrollController) => Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    image: DecorationImage(
-                      image: NetworkImage(pod.image),
-                      fit: BoxFit.cover,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
                     ),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.7),
-                        ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 15,
+                        offset: Offset(0, -5),
                       ),
-                    ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            pod.name,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                          // Handle bar
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             ),
                           ),
-                          SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.amber,
-                                  borderRadius: BorderRadius.circular(8),
+                          SizedBox(height: 16),
+
+                          // Header with image and basic info
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.25,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              image: DecorationImage(
+                                image: NetworkImage(pod.image),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.7),
+                                  ],
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.star, color: Colors.white, size: 12),
-                                    SizedBox(width: 2),
                                     Text(
-                                      '${pod.rating}',
+                                      pod.name,
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 12,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.amber,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.white,
+                                                size: 12,
+                                              ),
+                                              SizedBox(width: 2),
+                                              Text(
+                                                '${pod.rating}',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          '${pod.reviews} reviews',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Available',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      pod.price,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 6),
-                              Text(
-                                '${pod.reviews} reviews',
-                                style: TextStyle(color: Colors.white70, fontSize: 12),
-                              ),
-                              Spacer(),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+
+                          // Pod Gallery Section
+                          Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.photo_library,
+                                      color: theme.primaryColor,
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        'Available Pods',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                child: Text(
-                                  'Available',
+                                SizedBox(height: 6),
+                                Text(
+                                  'Tap any image to see pod details',
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            pod.price,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Pod Gallery Section
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.photo_library, color: theme.primaryColor, size: 18),
-                          SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              'Choose Your Pod',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: theme.primaryColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        'Tap any image to see pod details',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      Container(
-                        height:MediaQuery.of(context).size.height*0.35,
-                                        width:MediaQuery.of(context).size.width,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: imgList.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (context) => Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    insetPadding: EdgeInsets.all(16),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      padding: EdgeInsets.all(16),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(12),
-                                            child: Image.network(
-                                              imgList[index],
-                                              height: MediaQuery.of(context).size.height * 0.3,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          SizedBox(height: 12),
-                                          Text(
-                                            'Pod Option ${index + 1}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: theme.primaryColor,
-                                            ),
-                                          ),
-                                          SizedBox(height: 6),
-                                          Text(
-                                            'Premium workspace with modern amenities designed for maximum productivity and comfort.',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          SizedBox(height: 12),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                    // Select this pod
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: theme.primaryColor,
-                                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
+                                SizedBox(height: 12),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.35,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: imgList.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: true,
+                                            builder:
+                                                (context) => Dialog(
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  insetPadding: EdgeInsets.all(
+                                                    16,
                                                   ),
-                                                  child: Text(
-                                                    'Select Pod',
-                                                    style: TextStyle(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
                                                       color: Colors.white,
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            15,
+                                                          ),
+                                                    ),
+                                                    padding: EdgeInsets.all(16),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                12,
+                                                              ),
+                                                          child: Image.network(
+                                                            imgList[index],
+                                                            height:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.height *
+                                                                0.3,
+                                                            width:
+                                                                double.infinity,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 12),
+                                                        Text(
+                                                          'Pod Option ${index + 1}',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                theme
+                                                                    .primaryColor,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 6),
+                                                        Text(
+                                                          'Premium workspace with modern amenities designed for maximum productivity and comfort.',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            color:
+                                                                Colors
+                                                                    .grey[600],
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 12),
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: ElevatedButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                    context,
+                                                                  );
+                                                                  // Select this pod
+                                                                },
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor:
+                                                                      theme
+                                                                          .primaryColor,
+                                                                  padding:
+                                                                      EdgeInsets.symmetric(
+                                                                        vertical:
+                                                                            10,
+                                                                      ),
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          8,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                                child: Text(
+                                                                  'Select Pod',
+                                                                  style: TextStyle(
+                                                                    color:
+                                                                        Colors
+                                                                            .white,
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 8),
+                                                            Expanded(
+                                                              child: OutlinedButton(
+                                                                onPressed:
+                                                                    () => Navigator.pop(
+                                                                      context,
+                                                                    ),
+                                                                style: OutlinedButton.styleFrom(
+                                                                  padding:
+                                                                      EdgeInsets.symmetric(
+                                                                        vertical:
+                                                                            10,
+                                                                      ),
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          8,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                                child: Text(
+                                                                  'Close',
+                                                                  style: TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
+                                          );
+                                        },
+
+                                        child: Container(
+                                          height:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height *
+                                              0.45,
+                                          width:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.width *
+                                              0.65,
+                                          margin: EdgeInsets.only(right: 8),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(
+                                                  0.1,
+                                                ),
+                                                blurRadius: 6,
+                                                offset: Offset(0, 2),
                                               ),
-                                              SizedBox(width: 8),
-                                              Expanded(
-                                                child: OutlinedButton(
-                                                  onPressed: () => Navigator.pop(context),
-                                                  style: OutlinedButton.styleFrom(
-                                                    padding: EdgeInsets.symmetric(vertical: 10),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                  ),
+                                            ],
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                Image.network(
+                                                  imgList[index],
+
+                                                  width:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).size.width *
+                                                      0.65,
+                                                  fit: BoxFit.cover,
+                                                ),
+
+                                                Positioned(
+                                                  bottom: 4,
+                                                  left: 4,
+                                                  right: 4,
                                                   child: Text(
-                                                    'Close',
+                                                    'Pod ${index + 1}',
                                                     style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
+                                                    textAlign: TextAlign.center,
                                                   ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 16),
+
+                          // Description
+                          Text(
+                            'About This Location',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: theme.primaryColor,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            pod.description,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.4,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            'Perfect for focused work, meetings, or creative projects.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.3,
+                              color: Colors.grey[600],
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+
+                          // Amenities
+                          Text(
+                            'What\'s Included',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: theme.primaryColor,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children:
+                                pod.amenities
+                                    .map(
+                                      (amenity) => Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: theme.primaryColor.withOpacity(
+                                            0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                          border: Border.all(
+                                            color: theme.primaryColor
+                                                .withOpacity(0.3),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.check_circle,
+                                              color: theme.primaryColor,
+                                              size: 12,
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              amenity,
+                                              style: TextStyle(
+                                                color: theme.primaryColor,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                          SizedBox(height: 16),
+
+                          // Location & Contact info
+                          Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.access_time,
+                                                color: theme.primaryColor,
+                                                size: 16,
+                                              ),
+                                              SizedBox(width: 6),
+                                              Text(
+                                                'Hours',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: theme.primaryColor,
+                                                  fontSize: 13,
                                                 ),
                                               ),
                                             ],
                                           ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            pod.hours,
+                                            style: TextStyle(
+                                              color: Colors.grey[700],
+                                              fontSize: 12,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                              
-                              child: Container(
-                               height:MediaQuery.of(context).size.height*0.45,
-                              width:MediaQuery.of(context).size.width*0.65,
-                                margin: EdgeInsets.only(right: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 6,
-                                      offset: Offset(0, 2),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.phone,
+                                                color: theme.primaryColor,
+                                                size: 16,
+                                              ),
+                                              SizedBox(width: 6),
+                                              Text(
+                                                'Contact',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: theme.primaryColor,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            pod.phone,
+                                            style: TextStyle(
+                                              color: Colors.grey[700],
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Stack(
+                                SizedBox(height: 12),
+                                Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
                                     children: [
-                                      Image.network(
-                                        imgList[index],
-                                       
-                                       width:MediaQuery.of(context).size.width*0.65,
-                                        fit: BoxFit.cover,
+                                      Icon(
+                                        Icons.info_outline,
+                                        color: Colors.blue[600],
+                                        size: 16,
                                       ),
-                                 
-                                      Positioned(
-                                        bottom: 4,
-                                        left: 4,
-                                        right: 4,
+                                      SizedBox(width: 6),
+                                      Expanded(
                                         child: Text(
-                                          'Pod ${index + 1}',
+                                          'Book early to secure your preferred pod',
                                           style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue[700],
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                          textAlign: TextAlign.center,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Description
-                Text(
-                  'About This Location',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: theme.primaryColor,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  pod.description,
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  'Perfect for focused work, meetings, or creative projects.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    height: 1.3,
-                    color: Colors.grey[600],
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Amenities
-                Text(
-                  'What\'s Included',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: theme.primaryColor,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: pod.amenities
-                      .map(
-                        (amenity) => Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: theme.primaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: theme.primaryColor.withOpacity(0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                color: theme.primaryColor,
-                                size: 12,
-                              ),
-                              SizedBox(width: 4),
-                              Text(
-                                amenity,
-                                style: TextStyle(
-                                  color: theme.primaryColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-                SizedBox(height: 16),
-
-                // Location & Contact info
-                Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.access_time, color: theme.primaryColor, size: 16),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'Hours',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.primaryColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  pod.hours,
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontSize: 12,
-                                  ),
-                                ),
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.phone, color: theme.primaryColor, size: 16),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'Contact',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.primaryColor,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  pod.phone,
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontSize: 12,
+                          SizedBox(height: 20),
+
+                          // Book button
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(),
                                   ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.primaryColor,
+                                padding: EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                              ],
+                                elevation: 3,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Book This Location',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+                          SizedBox(height: 16),
                         ],
                       ),
-                      SizedBox(height: 12),
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.info_outline, color: Colors.blue[600], size: 16),
-                            SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                'Book early to secure your preferred pod',
-                                style: TextStyle(
-                                  color: Colors.blue[700],
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Book button
-                Container(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.primaryColor,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      elevation: 3,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Book This Location',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
-              ],
-            ),
           ),
-        ),
-      ),
-    ),
-  );
-}
+    );
+  }
+
   void _showBookingDialog(WorkPodLocation pod, ThemeData theme) {
     showDialog(
       context: context,

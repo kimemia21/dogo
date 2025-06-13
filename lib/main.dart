@@ -14,7 +14,7 @@ class PodApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'DOGO',
+      title: 'Dogo Pods - Find Your Perfect Workspace',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: getDevice(),

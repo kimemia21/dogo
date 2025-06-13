@@ -142,40 +142,56 @@ class Comms {
   }
 
   /// GET request implementation
-  Future<Map<String, dynamic>> getRequests({
-    required String endpoint,
-    Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? headers,
-    bool? isLocal,
-  }) async {
-    try {
-      final String url = "${isLocal!?"http://192.168.100.74:3000": baseUrl}/$endpoint";
+ Future<Map<String, dynamic>> getRequests({
+  required String endpoint,
+  Map<String, dynamic>? queryParameters,
+  Map<String, dynamic>? headers,
+  bool? isLocal,
+}) async {
+  try {
+    // Fix: Provide default value for isLocal
+    final bool useLocal = isLocal ?? false;
+    
+    final String url = "${useLocal ? "http://192.168.100.74:3000" : baseUrl}/$endpoint";
+    print("hitting $url");
+    print("Query parameters: $queryParameters");
 
-      final response = await _dio.get(
-        url,
-        queryParameters: queryParameters,
-        options: headers != null ? Options(headers: headers) : null,
-      );
+    final response = await _dio.get(
+      url,
+      queryParameters: queryParameters,
+      options: headers != null ? Options(headers: headers) : null,
+    );
 
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return {
-          "success": true,
-          "rsp": response.data,
-          "statusCode": response.statusCode,
-        };
-      } else {
-        return _handleErrorResponse(response);
-      }
-    } on DioException catch (e) {
-      return _handleDioException(e);
-    } catch (e) {
+    print("Response status: ${response.statusCode}");
+    print("Response data: ${response.data}");
+
+    // Fix: Add null check for statusCode
+    if (response.statusCode != null && 
+        response.statusCode! >= 200 && 
+        response.statusCode! < 300) {
       return {
-        "success": false,
-        "rsp": "An unexpected error occurred: ${e.toString()}",
-        "statusCode": null,
+        "success": true,
+        "rsp": response.data,
+        "statusCode": response.statusCode,
       };
+    } else {
+      return _handleErrorResponse(response);
     }
+  } on DioException catch (e) {
+    print("DioException caught: ${e.message}");
+    print("DioException type: ${e.type}");
+    return _handleDioException(e);
+  } catch (e) {
+    print("Unexpected error caught: $e");
+    print("Error type: ${e.runtimeType}");
+    print("Stack trace: ${StackTrace.current}");
+    return {
+      "success": false,
+      "rsp": "An unexpected error occurred: ${e.toString()}",
+      "statusCode": null,
+    };
   }
+}
 
   /// POST request implementation
   Future<Map<String, dynamic>> postRequest({
