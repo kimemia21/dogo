@@ -208,6 +208,7 @@ class Comms {
               ? "http://192.168.100.74:3000$endpoint"
               : "$baseUrl/$endpoint";
       print("---------------$url------------------------");
+      print("################################$data######################");
 
       dynamic requestData = data;
       if (isFormData) {

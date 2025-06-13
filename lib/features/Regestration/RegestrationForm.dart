@@ -22,18 +22,11 @@ class _PodBookingPageState extends State<PodBookingPage> {
   final _userNameController = TextEditingController();
 
   int _currentStep = 0;
-  DateTime _selectedDate = DateTime.now();
-  String get formattedDate =>
-      "${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}";
-  TimeSlot? _selectedTimeSlot;
   PaymentMethod? _selectedPaymentMethod;
-  String _selectedHours = '01';
-  String _selectedMinutes = '00';
   String _charges = "ksh 0";
   String? _errorMessage;
   bool _isLoading = false;
   List<PaymentMethodInfo> _paymentMethods = [];
-  List<TimeSlot> _availableSlots = [];
 
   @override
   void dispose() {
@@ -56,26 +49,6 @@ class _PodBookingPageState extends State<PodBookingPage> {
   double get titleFontSize => isWeb ? 32 : 24;
 
   // API Methods (keeping original functionality)
-  Future<void> _fetchTariffs() async {
-    try {
-      final req = await comms.getRequests(
-        endpoint: "rates",
-        queryParameters: {
-          "hh": int.parse(_selectedHours),
-          "mm": int.parse(_selectedMinutes),
-        },
-      );
-      if (req["rsp"]['success']) {
-        setState(() {
-          _charges = req["rsp"]['data']['charges'];
-          _errorMessage = null;
-        });
-      }
-    } catch (e) {
-      setState(() => _errorMessage = "Failed to fetch charges");
-    }
-  }
-
   Future<void> _fetchPaymentMethods() async {
     try {
       _paymentMethods = await fetchGlobal<PaymentMethodInfo>(
@@ -89,29 +62,6 @@ class _PodBookingPageState extends State<PodBookingPage> {
     }
   }
 
-  Future<void> _fetchAvailableSlots() async {
-    setState(() => _isLoading = true);
-    try {
-      final req = await comms.postRequest(
-        endpoint: "pods/slots",
-        data: {"podId": 1, "date": formattedDate},
-      );
-
-      if (req["rsp"]['success']) {
-        setState(() {
-          _availableSlots =
-              (req["rsp"]['data'] as List)
-                  .map((slot) => TimeSlot.fromJson(slot))
-                  .toList();
-        });
-      }
-    } catch (e) {
-      setState(() => _errorMessage = "Failed to fetch available slots");
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
   Future<void> _bookPod() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -121,16 +71,22 @@ class _PodBookingPageState extends State<PodBookingPage> {
     });
 
     try {
-      final sessionData = {
+      if (!_formKey.currentState!.validate()) {
+        setState(() => _errorMessage = "Please fill in all required fields");
+        return;
+      }
+
+      final Map<String, dynamic> sessionData = {
         "podId": 1,
-        "date": formattedDate,
-        "startTime": _selectedTimeSlot!.timeSlot,
-        "hh": _selectedHours,
-        "mm": _selectedMinutes,
-        "userPhone": _phoneController.text,
-        "userName": _userNameController.text,
-        "userEmail": _emailController.text,
+        "userPhone": _phoneController.text.trim(),
+        "userName": _userNameController.text.trim(),
+        "userEmail": _emailController.text.trim(),
       };
+
+       print("presession Data $sessionData");
+
+      sessionData.addAll(sessionbooking.toJson());
+      print("Session Data $sessionData");
 
       final request = await comms.postRequest(
         endpoint: "pods/book",
@@ -147,7 +103,7 @@ class _PodBookingPageState extends State<PodBookingPage> {
         );
         print("mesh${booking.toJson()}");
         _fetchPaymentMethods();
-        setState(() => _currentStep = 3);
+        setState(() => _currentStep = 1);
       } else {
         setState(() => _errorMessage = "Booking failed: ${request['rsp']}");
       }
@@ -160,14 +116,20 @@ class _PodBookingPageState extends State<PodBookingPage> {
 
   void _nextStep() {
     if (_currentStep == 0 && _validateUserDetails()) {
-      setState(() => _currentStep = 1);
-      _fetchAvailableSlots();
-    } else if (_currentStep == 1 && _selectedTimeSlot != null) {
-      setState(() => _currentStep = 2);
-      _fetchTariffs();
-    } else if (_currentStep == 2) {
       _bookPod();
     }
+    // else if (_currentStep == 1) {
+    //   if (_selectedPaymentMethod != null) {
+    //     // Handle payment confirmation
+    //     if (_selectedPaymentMethod == PaymentMethod.mpesa) {
+    //       showMpesaPaymentDialog(context);
+    //     } else {
+    //       setState(() => _errorMessage = "Only M-Pesa is available for now");
+    //     }
+    //   } else {
+    //     setState(() => _errorMessage = "Please select a payment method");
+    //   }
+    // }
   }
 
   bool _validateUserDetails() {
@@ -220,7 +182,7 @@ class _PodBookingPageState extends State<PodBookingPage> {
   }
 
   Widget _buildHeader() {
-    final stepTitles = ['Your Details', 'Select Time', 'Duration', 'Payment'];
+    final stepTitles = ['Your Details', 'Payment'];
     return Column(
       children: [
         Text(
@@ -239,7 +201,6 @@ class _PodBookingPageState extends State<PodBookingPage> {
             color: Colors.grey[600],
           ),
           textAlign: TextAlign.center,
-          
         ),
       ],
     );
@@ -250,10 +211,6 @@ class _PodBookingPageState extends State<PodBookingPage> {
       case 0:
         return 'Enter your contact information';
       case 1:
-        return 'Choose your preferred date and time';
-      case 2:
-        return 'Select booking duration';
-      case 3:
         return 'Choose payment method';
       default:
         return '';
@@ -264,7 +221,7 @@ class _PodBookingPageState extends State<PodBookingPage> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: isWeb ? 40 : 20),
       child: Row(
-        children: List.generate(4, (index) {
+        children: List.generate(2, (index) {
           final isActive = index <= _currentStep;
           return Expanded(
             child: Container(
@@ -289,10 +246,6 @@ class _PodBookingPageState extends State<PodBookingPage> {
       case 0:
         return _buildUserDetailsStep();
       case 1:
-        return _buildSlotsStep();
-      case 2:
-        return _buildDurationStep();
-      case 3:
         return _buildPaymentStep();
       default:
         return Container();
@@ -320,88 +273,6 @@ class _PodBookingPageState extends State<PodBookingPage> {
           controller: _userNameController,
           label: 'Full Name',
           icon: Icons.person_outlined,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSlotsStep() {
-    return Column(
-      children: [
-        _buildCompactDateSelector(),
-        SizedBox(height: isWeb ? 32 : 20),
-        if (_isLoading)
-          Center(child: CircularProgressIndicator(strokeWidth: isWeb ? 4 : 3))
-        else if (_availableSlots.isNotEmpty)
-          _buildCompactTimeSlots(),
-      ],
-    );
-  }
-
-  Widget _buildDurationStep() {
-    return Column(
-      children: [
-        isWeb
-            ? Row(
-              children: [
-                Expanded(
-                  child: _buildDurationPicker('Hours', _selectedHours, (val) {
-                    setState(() => _selectedHours = val);
-                    _fetchTariffs();
-                  }),
-                ),
-                SizedBox(width: 24),
-                Expanded(
-                  child: _buildDurationPicker('Minutes', _selectedMinutes, (
-                    val,
-                  ) {
-                    setState(() => _selectedMinutes = val);
-                    _fetchTariffs();
-                  }),
-                ),
-              ],
-            )
-            : Column(
-              children: [
-                _buildDurationPicker('Hours', _selectedHours, (val) {
-                  setState(() => _selectedHours = val);
-                  _fetchTariffs();
-                }),
-                SizedBox(height: 16),
-                _buildDurationPicker('Minutes', _selectedMinutes, (val) {
-                  setState(() => _selectedMinutes = val);
-                  _fetchTariffs();
-                }),
-              ],
-            ),
-        SizedBox(height: isWeb ? 32 : 24),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(isWeb ? 24 : 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Total Charges',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(fontSize: fontSize),
-              ),
-              SizedBox(height: 8),
-              Text(
-                _charges,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: isWeb ? 28 : 20,
-                ),
-              ),
-            ],
-          ),
         ),
       ],
     );
@@ -455,201 +326,6 @@ class _PodBookingPageState extends State<PodBookingPage> {
         validator:
             (value) => value?.isEmpty == true ? 'This field is required' : null,
       ),
-    );
-  }
-
-  Widget _buildCompactDateSelector() {
-    return Container(
-      height: isWeb ? 100 : 80,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 7,
-        itemBuilder: (context, index) {
-          final date = DateTime.now().add(Duration(days: index));
-          final isSelected =
-              _selectedDate.day == date.day &&
-              _selectedDate.month == date.month;
-
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedDate = date;
-                _selectedTimeSlot = null;
-              });
-              _fetchAvailableSlots();
-            },
-            child: Container(
-              width: isWeb ? 80 : 60,
-              margin: EdgeInsets.only(right: isWeb ? 12 : 8),
-              decoration: BoxDecoration(
-                color:
-                    isSelected
-                        ? Theme.of(context).colorScheme.secondary
-                        : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color:
-                      isSelected
-                          ? Theme.of(context).colorScheme.secondary
-                          : AppColors.border,
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    ['S', 'M', 'T', 'W', 'T', 'F', 'S'][date.weekday % 7],
-                    style: TextStyle(
-                      fontSize: isWeb ? 14 : 12,
-                      color: isSelected ? Colors.white : Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 6),
-                  Text(
-                    date.day.toString(),
-                    style: TextStyle(
-                      fontSize: isWeb ? 24 : 18,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildCompactTimeSlots() {
-    return isWeb
-        ? GridView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            childAspectRatio: 2.5,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-          ),
-          itemCount: _availableSlots.length,
-          itemBuilder: (context, index) {
-            final slot = _availableSlots[index];
-            return _buildTimeSlotItem(slot);
-          },
-        )
-        : Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children:
-              _availableSlots.map((slot) => _buildTimeSlotItem(slot)).toList(),
-        );
-  }
-
-  Widget _buildTimeSlotItem(TimeSlot slot) {
-    final isSelected = _selectedTimeSlot?.timeSlot == slot.timeSlot;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedTimeSlot = slot),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: isWeb ? 20 : 16,
-          vertical: isWeb ? 16 : 12,
-        ),
-        decoration: BoxDecoration(
-          color:
-              isSelected
-                  ? Theme.of(context).colorScheme.secondary
-                  : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color:
-                isSelected
-                    ? Theme.of(context).colorScheme.secondary
-                    : AppColors.border,
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Text(
-          slot.timeSlot,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: fontSize,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDurationPicker(
-    String label,
-    String value,
-    Function(String) onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(height: 12),
-        Container(
-          height: fieldHeight,
-          padding: EdgeInsets.symmetric(horizontal: isWeb ? 20 : 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.border, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
-              isExpanded: true,
-              style: TextStyle(fontSize: fontSize, color: Colors.black),
-              items: List.generate(
-                label == 'Hours' ? 24 : 60,
-                (index) => DropdownMenuItem(
-                  value: index.toString().padLeft(2, '0'),
-                  child: Text(
-                    index.toString().padLeft(2, '0'),
-                    style: TextStyle(fontSize: fontSize),
-                  ),
-                ),
-              ),
-              onChanged: (val) => onChanged(val!),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -810,12 +486,8 @@ class _PodBookingPageState extends State<PodBookingPage> {
   String _getButtonText() {
     switch (_currentStep) {
       case 0:
-        return 'CONTINUE';
-      case 1:
-        return 'SELECT TIME';
-      case 2:
         return 'BOOK POD';
-      case 3:
+      case 1:
         return 'CONFIRM PAYMENT';
       default:
         return 'NEXT';

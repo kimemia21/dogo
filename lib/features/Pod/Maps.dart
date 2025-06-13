@@ -1,5 +1,6 @@
 import 'package:dogo/features/Pod/Homepage.dart';
 import 'package:dogo/features/Regestration/Booking.dart';
+import 'package:dogo/features/Regestration/RegestrationForm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -1427,7 +1428,7 @@ class _LandingPageState extends State<LandingPage>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => HomePage(),
+                                    builder: (context) => PodBookingPage(),
                                   ),
                                 );
                               },
