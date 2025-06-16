@@ -37,8 +37,10 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+build/cache.dill.track.dill 
 
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
+build/cache.dill.track.dill 
