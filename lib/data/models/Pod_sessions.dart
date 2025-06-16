@@ -15,16 +15,14 @@ class PodSession {
     required this.isValid,
   });
 
-
-
-    factory PodSession.empty() {
+  factory PodSession.empty() {
     final now = DateTime.now();
     return PodSession(
       sessId: '',
       phone: '',
       timeIn: now,
       timeOut: now.add(Duration(minutes: 5)),
-      duration:Duration(minutes: 5),
+      duration: Duration(minutes: 5),
       isValid: true,
     );
   }
@@ -85,12 +83,17 @@ class PodSession {
       endTimeParts.length > 2 ? int.parse(endTimeParts[2]) : 0,
     );
     
-    // Calculate duration from actual start/end times
-    final duration = timeOut.difference(timeIn);
+    // Use sessDuration from the data if available, otherwise calculate from times
+    Duration duration;
+    if (map.containsKey('sessDuration') && map['sessDuration'] != null) {
+      duration = Duration(minutes: map['sessDuration']);
+    } else {
+      duration = timeOut.difference(timeIn);
+    }
     
     return PodSession(
-      sessId: map['sessId'],
-      phone: map['phone'] ?? '',
+      sessId: map['sessId'] ?? '',
+      phone: map['phone'] ?? '', // Use phone from data or empty string
       timeIn: timeIn,
       timeOut: timeOut,
       duration: duration,
