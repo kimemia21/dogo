@@ -27,21 +27,20 @@ class _OTPFormState extends State<OTPForm> {
 
   void _validateOTP() async {
     // TESTING BYPASS
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PodSessionHomepage(session: PodSession.empty()),
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => PodSessionHomepage(session: PodSession.empty()),
 
-      ),
-    );
-     Map<String, dynamic> data = {
-          "user": "John",
-          "duration": 2,
-          "interval": 1,
-          "startNow": true,
-           "sessionid":"232112"
-        };
-Localhost.postToLocalhost("/api/start", data);
+    //   ),
+    // );
+    //  Map<String, dynamic> data = {
+    //       "user": "John",
+    //       "duration": 2,
+    //       "interval": 1,
+    //       "startNow": true,
+    //        "sessionid":"232112"
+    //     };
 
     if (!_formKey.currentState!.validate()) {
       return;
@@ -67,62 +66,69 @@ Localhost.postToLocalhost("/api/start", data);
 
         final PodSession session = PodSession.fromMap(response["rsp"]["data"]);
         comms.setAuthToken(response["AuthToken"]);
-        Map<String, dynamic> data = {
-          "user": "John",
-          "duration": 2,
-          "interval": 1,
-          "startNow": true,
-           "sessionid":"232112"
-        };
-        
-  Localhost.postToLocalhost("/api/start", data);
+        // Map<String, dynamic> data = {
+        //   "user": "John",
+        //   "duration": 2,
+        //   "interval": 1,
+        //   "startNow": true,
+        //    "sessionid":"232112"
+        // };
+        print(session.toMap());
 
-  Navigator.pushReplacement(
+        Localhost.postToLocalhost("/api/start", session.toMap());
+
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => PodSessionHomepage(session: session),
           ),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.error_outline, color: Colors.white),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    response["data"]["message"],
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
+
+
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Row(
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red.shade700),
+                    SizedBox(width: 12),
+                    Text('Error'),
+                  ],
                 ),
-              ],
-            ),
-            backgroundColor: Colors.red.shade700,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            margin: EdgeInsets.all(12),
-            duration: Duration(seconds: 4),
-            action: SnackBarAction(
-              label: 'Dismiss',
-              textColor: Colors.white,
-              onPressed: () {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-            ),
-          ),
-        );
+                content: Text(
+                  response["data"]["message"],
+                  style: TextStyle(fontSize: 16),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).primaryColor,
+                    ),
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("$e"), backgroundColor: Colors.red),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text("$e"), backgroundColor: Colors.red),
+      // );
     }
   }
 
@@ -312,12 +318,110 @@ Localhost.postToLocalhost("/api/start", data);
                       onPressed:
                           _isLoading
                               ? null
-                              : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PodBookingPage(),
-                                  ),
+                              : () async {
+                                await showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    // Auto dismiss after 30 seconds
+                                    Future.delayed(Duration(seconds: 30), () {
+                                      Navigator.of(context).pop();
+                                    });
+
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      title: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.qr_code_scanner,
+                                            size: 40,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'Scan to Register',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      content: Container(
+                                        width: 300,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.grey.shade300,
+                                                  width: 2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Image.network(
+                                                'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=YourDataHere',
+                                                width: 250,
+                                                height: 250,
+                                              ),
+                                            ),
+                                            SizedBox(height: 15),
+                                            Text(
+                                              'Scan this QR code with your phone\'s camera to register for a new account',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.grey.shade600,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'Dialog will close in 30 seconds',
+                                              style: TextStyle(
+                                                color: Colors.grey.shade500,
+                                                fontSize: 12,
+                                                fontStyle: FontStyle.italic,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          style: TextButton.styleFrom(
+                                            backgroundColor: Theme.of(
+                                              context,
+                                            ).primaryColor.withOpacity(0.1),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          onPressed:
+                                              () => Navigator.of(context).pop(),
+                                          child: Text(
+                                            'Close',
+                                            style: TextStyle(
+                                              color:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               },
                       style: TextButton.styleFrom(

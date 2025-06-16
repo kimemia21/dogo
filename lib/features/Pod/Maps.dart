@@ -74,6 +74,75 @@ class _LandingPageState extends State<LandingPage>
     'https://corsproxy.io/?https://dogo.co.ke/wp-content/uploads/2025/02/Nap-Pod-2-768x1089.png',
   ];
 
+final List<Map<String, dynamic>> podDesc = [
+  {
+    "name": "Dogo Solo",
+    "description":
+        "For private calls and online meetings in the workplace, home, school and public spaces",
+    "features": [
+      "50 sq ft",
+      "Exterior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H",
+      "Interior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H"
+    ]
+  },
+  {
+    "name": "Dogo Duo",
+    "description":
+        "For private calls and online meetings in the workplace, home, school and public spaces",
+    "features": [
+      "50 sq ft",
+      "Exterior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H",
+      "Interior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H"
+    ]
+  },
+  {
+    "name": "Lactation Room",
+    "description":
+        "Does your workplace support moms by providing pumping or nursing spaces? Dogo lactation room is a lactation solution for moms in the workplace.",
+    "features": [
+      "50 sq ft",
+      "Exterior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H",
+      "Interior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H"
+    ]
+  },
+  {
+    "name": "Nap Pod",
+    "description": "Ideal for short rest and recovery sessions in workspaces or schools.",
+    "features": [
+      "50 sq ft",
+      "Exterior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H",
+      "Interior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H"
+    ]
+  },
+  {
+    "name": "Prayer Pod",
+    "description": "A quiet space for personal devotion, prayer, or meditation.",
+    "features": [
+      "50 sq ft",
+      "Exterior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H",
+      "Interior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H"
+    ]
+  },
+  {
+    "name": "Homework Pod",
+    "description": "Designed for focused learning and study sessions in schools and libraries.",
+    "features": [
+      "50 sq ft",
+      "Exterior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H",
+      "Interior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H"
+    ]
+  },
+  {
+    "name": "Gaming Pod",
+    "description": "Equipped for immersive gaming experiences with sound isolation.",
+    "features": [
+      "50 sq ft",
+      "Exterior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H",
+      "Interior Dimensions: 9’3″ W x 5’6″ D x 7’7″ H"
+    ]
+  },
+];
+
   @override
   void initState() {
     super.initState();
@@ -1040,7 +1109,8 @@ class _LandingPageState extends State<LandingPage>
                                                         ),
                                                         SizedBox(height: 12),
                                                         Text(
-                                                          'Pod Option ${index + 1}',
+
+                                                          '${podDesc[index]["name"]}',
                                                           style: TextStyle(
                                                             fontSize: 16,
                                                             fontWeight:
@@ -1051,9 +1121,8 @@ class _LandingPageState extends State<LandingPage>
                                                           ),
                                                         ),
                                                         SizedBox(height: 6),
-                                                        Text(
-                                                          'Premium workspace with modern amenities designed for maximum productivity and comfort.',
-                                                          textAlign:
+                                                        Text('${podDesc[index]["description"]}',
+                                                         textAlign:
                                                               TextAlign.center,
                                                           style: TextStyle(
                                                             color:
@@ -1193,7 +1262,7 @@ class _LandingPageState extends State<LandingPage>
                                                   left: 4,
                                                   right: 4,
                                                   child: Text(
-                                                    'Pod ${index + 1}',
+                                                    '${podDesc[index]["name"]}',
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 10,

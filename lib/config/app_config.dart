@@ -1,7 +1,9 @@
 import 'package:dogo/core/constants/initializer.dart';
+import 'package:dogo/core/theme/AppTheme.dart';
 import 'package:dogo/data/models/Pod.dart';
 import 'package:dogo/features/Pod/Homepage.dart';
 import 'package:dogo/features/Pod/Maps.dart';
+import 'package:dogo/features/Pod/otpPage.dart';
 import 'package:dogo/main.dart';
 import 'package:dogo/features/Pod/select_pod.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,14 @@ getPodId() {
 }
 
 Widget getDevice() {
-  return podId != null ?  LandingPage(wasBooked: false,):  LandingPage(wasBooked: false,);
-  
+  return 
+     MaterialApp(
+        theme: AppTheme.lightTheme,
+        home:podId==null?  LandingPage(wasBooked: false):OTPForm(),
+      );
+
+
+   
+
   //  HomePage() : PodSelectionForm() ;
 }
