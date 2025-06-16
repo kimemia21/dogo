@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
 void main() {
-  getPodId();
+  // getPodId();
   runApp(PodApp());
 }
 
