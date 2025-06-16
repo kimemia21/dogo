@@ -1,40 +1,26 @@
+import 'package:dogo/core/constants/initializer.dart';
 import 'package:dogo/core/theme/AppTheme.dart';
+import 'package:dogo/data/models/Pod.dart';
+import 'package:dogo/features/Pod/Homepage.dart';
 import 'package:dogo/features/Pod/Maps.dart';
 import 'package:dogo/features/Pod/otpPage.dart';
+import 'package:dogo/main.dart';
+import 'package:dogo/features/Pod/select_pod.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:web/web.dart' as web;
 
-// Define your routes
-final GoRouter _router = GoRouter(
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) =>  LandingPage(wasBooked: false),
-    ),
-    GoRoute(
-      path: '/pod/:podId',
-      builder: (context, state) {
-        final podIdStr = state.pathParameters['podId'];
-        final podId = int.tryParse(podIdStr ?? '');
-        
-        if (podId != null) {
-          return OTPForm();
-        } else {
-          return  LandingPage(wasBooked: false);
-        }
-      },
-    ),
-    GoRoute(
-      path: '/otp',
-      builder: (context, state) => const OTPForm(),
-    ),
-  ],
-  errorBuilder: (context, state) =>  LandingPage(wasBooked: false),
-);
+getPodId() {
+  final uri = Uri.parse(web.window.location.href);
+  final segments = uri.pathSegments;
+  podId = segments.isNotEmpty ? int.tryParse(segments.last) : null;
+}
 
 Widget getDevice() {
-  return MaterialApp.router(
+  print(podId);
+  return MaterialApp(
     theme: AppTheme.lightTheme,
-    routerConfig: _router,
+    home: podId == null ? LandingPage(wasBooked: false) : OTPForm(),
   );
+
+  //  HomePage() : PodSelectionForm() ;
 }
